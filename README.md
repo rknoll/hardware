@@ -1,0 +1,1 @@
+Quartus Plugin for Gradle

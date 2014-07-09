@@ -1,0 +1,9 @@
+apply plugin: 'groovy'
+apply plugin: 'maven'
+
+dependencies {
+	mavenCentral()
+}
+
+group = 'at.rknoll'
+version = '0.1-SNAPSHOT'
