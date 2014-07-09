@@ -2,8 +2,21 @@ apply plugin: 'groovy'
 apply plugin: 'maven'
 
 dependencies {
+	compile gradleApi()
+	compile localGroovy()
+}
+
+repositories {
 	mavenCentral()
 }
 
-group = 'at.rknoll'
+group = 'at.rknoll.gradle'
 version = '0.1-SNAPSHOT'
+
+uploadArchives {
+	repositories {
+		mavenDeployer {
+			repository(url: uri('../repo'))
+		}
+	}
+}
