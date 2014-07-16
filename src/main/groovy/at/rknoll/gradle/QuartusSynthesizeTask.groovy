@@ -8,6 +8,7 @@ class QuartusSynthesizeTask extends DefaultTask {
 	@TaskAction
 	def synthesize() {
 		println "-- Quartus Synthesize --"
+		println "Quartus Path: " + QuartusUtils.findQuartusExecutable("C:\\")
 	}
 
 }

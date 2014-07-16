@@ -13,6 +13,10 @@ repositories {
 group = 'at.rknoll.gradle'
 version = '0.1-SNAPSHOT'
 
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.0'
+}
+
 uploadArchives {
 	repositories {
 		mavenDeployer {
