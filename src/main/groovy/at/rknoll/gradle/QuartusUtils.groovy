@@ -5,7 +5,7 @@ import java.util.*
 
 class QuartusUtils {
 
-    private static final String QUARTUS_EXE = "quartus.exe"
+    public static final String QUARTUS_EXE = "quartus.exe"
     
     private static final Set<String> QUARTUS_DIRS = new HashSet<String>(Arrays.asList(
         [ "altera", "quartus", "bin64", "bin" ] as String []
@@ -26,7 +26,7 @@ class QuartusUtils {
             }
         }
         
-        throw new Exception("Could not locate Quartus Executable. Please define your local Installation Path.")
+        throw new Exception("Could not locate Quartus Executable. Please define your local Installation Path." + subDirectories.get(0))
     }
     
 }
