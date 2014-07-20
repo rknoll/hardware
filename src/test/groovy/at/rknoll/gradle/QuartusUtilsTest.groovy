@@ -12,12 +12,14 @@ class QuartusUtilsTest {
 	@Test
 	public void findsQuartusInTopDir() {
 		File dir = Files.createTempDirectory(null).toFile()
-		File file = new File(dir, QuartusUtils.QUARTUS_EXE)
+		File file = new File(dir, "quartus.exe")
 		
 		file.createNewFile()
-		
-		QuartusUtils.findQuartusExecutable([ dir.getAbsolutePath() ] as String[])
-		
+        QuartusExtension ext = new QuartusExtension();
+        ext.path = dir.getAbsolutePath()
+
+        QuartusUtils.findQuartusExecutable("quartus.exe", ext)
+
 		dir.deleteOnExit()
 		file.deleteOnExit()
 	}

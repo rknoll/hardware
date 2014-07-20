@@ -7,6 +7,7 @@ if (hasProperty('teamcity')) {
 
 apply plugin: 'groovy'
 apply plugin: 'maven'
+apply plugin: 'idea'
 
 dependencies {
 	compile gradleApi()
