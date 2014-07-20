@@ -1,4 +1,4 @@
-package at.rknoll.gradle
+package at.rknoll.gradle.hardware.quartus
 
 /**
  * Created by Richard on 20.07.2014.

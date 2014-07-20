@@ -1,4 +1,4 @@
-package at.rknoll.gradle
+package at.rknoll.gradle.hardware.quartus
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction

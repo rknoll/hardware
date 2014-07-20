@@ -1,7 +1,4 @@
-package at.rknoll.gradle
-
-import java.lang.*
-import java.util.*
+package at.rknoll.gradle.hardware.quartus
 
 class QuartusUtils {
 

@@ -1,6 +1,7 @@
-package at.rknoll.gradle
+package at.rknoll.gradle.hardware.quartus
 
-import org.gradle.api.*
+import org.gradle.api.Plugin
+import org.gradle.api.Project
 
 class QuartusPlugin implements Plugin<Project> {
 
