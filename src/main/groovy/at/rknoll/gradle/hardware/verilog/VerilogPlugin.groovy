@@ -1,4 +1,4 @@
-package at.rknoll.gradle.hardware.vhdl
+package at.rknoll.gradle.hardware.verilog
 
 import at.rknoll.gradle.hardware.HardwarePlugin
 import at.rknoll.gradle.hardware.HardwarePluginConvention
@@ -16,11 +16,11 @@ import javax.inject.Inject
 /**
  * Created by rknoll on 20/07/14.
  */
-class VhdlPlugin implements Plugin<Project> {
+class VerilogPlugin implements Plugin<Project> {
 	private final FileResolver fileResolver
 
 	@Inject
-	public VhdlPlugin(FileResolver fileResolver) {
+	public VerilogPlugin(FileResolver fileResolver) {
 		this.fileResolver = fileResolver
 	}
 
@@ -40,15 +40,15 @@ class VhdlPlugin implements Plugin<Project> {
 
         container.all(new Action<SourceSet>() {
 			public void execute(SourceSet sourceSet) {
-				final DefaultVhdlSourceSet vhdlSourceSet = new DefaultVhdlSourceSet(((DefaultSourceSet) sourceSet).getDisplayName(), fileResolver);
-                new DslObject(sourceSet).getConvention().getPlugins().put("vhdl", vhdlSourceSet);
+				final DefaultVerilogSourceSet verilogSourceSet = new DefaultVerilogSourceSet(((DefaultSourceSet) sourceSet).getDisplayName(), fileResolver);
+                new DslObject(sourceSet).getConvention().getPlugins().put("verilog", verilogSourceSet);
 
-                vhdlSourceSet.getVhdl().srcDir(String.format("src/%s/vhdl", sourceSet.getName()));
+                verilogSourceSet.getVerilog().srcDir(String.format("src/%s/verilog", sourceSet.getName()));
 
-                String compileTaskName = sourceSet.getCompileTaskName("vhdl");
-                VhdlCompileTask compile = project.getTasks().create(compileTaskName, VhdlCompileTask.class);
-                compile.setDescription(String.format("Compiles the %s Vhdl source.", sourceSet.getName()));
-                compile.setSource(vhdlSourceSet.getVhdl());
+                String compileTaskName = sourceSet.getCompileTaskName("verilog");
+                VerilogCompileTask compile = project.getTasks().create(compileTaskName, VerilogCompileTask.class);
+                compile.setDescription(String.format("Compiles the %s Verilog source.", sourceSet.getName()));
+                compile.setSource(verilogSourceSet.getVerilog());
             }
         });
 	}
