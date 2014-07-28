@@ -1,6 +1,5 @@
 package at.rknoll.gradle.hardware.vhdl
 
-import groovy.lang.Closure
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.internal.file.DefaultSourceDirectorySet
 import org.gradle.api.internal.file.FileResolver

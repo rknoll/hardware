@@ -1,13 +1,15 @@
 package at.rknoll.gradle.hardware.vhdl
 
-import org.gradle.api.*
-import org.gradle.api.internal.project.ProjectInternal
-import org.gradle.api.tasks.SourceSet
 import at.rknoll.gradle.hardware.HardwarePlugin
 import at.rknoll.gradle.hardware.HardwarePluginConvention
+import org.gradle.api.Action
+import org.gradle.api.Plugin
+import org.gradle.api.Project
+import org.gradle.api.internal.file.FileResolver
 import org.gradle.api.internal.plugins.DslObject
 import org.gradle.api.internal.tasks.DefaultSourceSet
-import org.gradle.api.internal.file.FileResolver
+import org.gradle.api.tasks.SourceSet
+
 import javax.inject.Inject
 
 /**
