@@ -32,8 +32,13 @@ class VhdlPlugin implements Plugin<Project> {
                 new DslObject(sourceSet).getConvention().getPlugins().put("vhdl", vhdlSourceSet);
 
                 vhdlSourceSet.getVhdl().srcDir(String.format("src/%s/vhdl", sourceSet.getName()));
-			}
-		});
+
+                String compileTaskName = sourceSet.getCompileTaskName("vhdl");
+                VhdlCompileTask compile = project.getTasks().create(compileTaskName, VhdlCompileTask.class);
+                compile.setDescription(String.format("Compiles the %s Vhdl source.", sourceSet.getName()));
+                compile.setSource(vhdlSourceSet.getVhdl());
+            }
+        });
 	}
 
 }
