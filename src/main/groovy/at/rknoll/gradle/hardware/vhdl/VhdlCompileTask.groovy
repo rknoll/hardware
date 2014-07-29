@@ -14,6 +14,9 @@ class VhdlCompileTask extends SourceTask {
 
         sources.visit { file ->
             println "$file.relativePath => $file.file"
+			if (project.hardwareCompilers.find { it.compile(file.file) } == null) {
+				println "could not compile $file.name"
+			}
         }
     }
 

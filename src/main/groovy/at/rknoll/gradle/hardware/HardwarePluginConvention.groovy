@@ -8,13 +8,19 @@ import org.gradle.internal.reflect.Instantiator
 class HardwarePluginConvention {
     ProjectInternal project
     final SourceSetContainer sourceSets
+    final HardwareCompilerContainer hardwareCompilers
 
     HardwarePluginConvention(ProjectInternal project, Instantiator instantiator) {
         this.project = project
         sourceSets = instantiator.newInstance(DefaultSourceSetContainer.class, project.fileResolver, project.tasks, instantiator)
+		hardwareCompilers = instantiator.newInstance(DefaultHardwareCompilerContainer.class, instantiator)
     }
 
     def sourceSets(Closure closure) {
         sourceSets.configure(closure)
+    }
+
+    def hardwareCompilers(Closure closure) {
+        hardwareCompilers.configure(closure)
     }
 }
