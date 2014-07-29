@@ -39,8 +39,8 @@ class VhdlPlugin implements Plugin<Project> {
         }
 
         container.all(new Action<SourceSet>() {
-			public void execute(SourceSet sourceSet) {
-				final DefaultVhdlSourceSet vhdlSourceSet = new DefaultVhdlSourceSet(((DefaultSourceSet) sourceSet).getDisplayName(), fileResolver);
+            public void execute(SourceSet sourceSet) {
+                final DefaultVhdlSourceSet vhdlSourceSet = new DefaultVhdlSourceSet(((DefaultSourceSet) sourceSet).getDisplayName(), fileResolver);
                 new DslObject(sourceSet).getConvention().getPlugins().put("vhdl", vhdlSourceSet);
 
                 vhdlSourceSet.getVhdl().srcDir(String.format("src/%s/vhdl", sourceSet.getName()));
@@ -49,8 +49,9 @@ class VhdlPlugin implements Plugin<Project> {
                 VhdlCompileTask compile = project.getTasks().create(compileTaskName, VhdlCompileTask.class);
                 compile.setDescription(String.format("Compiles the %s Vhdl source.", sourceSet.getName()));
                 compile.setSource(vhdlSourceSet.getVhdl());
+                project.getTasks().getByName(HardwarePlugin.BUILD_TASK_NAME).dependsOn(compileTaskName);
             }
         });
-	}
+    }
 
 }

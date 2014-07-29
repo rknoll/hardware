@@ -1,5 +1,6 @@
 group = 'at.rknoll.gradle'
 version = '0.1'
+
 if (hasProperty('teamcity')) {
     version += '-' + property('teamcity')['build.number']
     println "##teamcity[buildNumber '" + version + "']"
@@ -19,7 +20,7 @@ repositories {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '1.10'
+    gradleVersion = '2.0'
 }
 
 uploadArchives {
