@@ -1,9 +1,9 @@
-package at.rknoll.gradle.hardware.quartus
+package at.rknoll.gradle.hardware.modelsimaltera
 
-class QuartusUtils {
+class ModelsimAlteraUtils {
 
-    private static final Set<String> QUARTUS_DIRS = new HashSet<String>(Arrays.asList(
-        [ "altera", "quartus", "bin", "bin64" ] as String []
+    private static final Set<String> MODELSIM_ALTERA_DIRS = new HashSet<String>(Arrays.asList(
+        [ "altera", "modelsim_ase", "win32aloem" ] as String []
     ));
 
     private static boolean matches(String filename, String executable) {
@@ -14,7 +14,7 @@ class QuartusUtils {
         return executable.equals(filename)
     }
 
-    public static String findQuartusExecutable(String executable, QuartusExtension options) {
+    public static String findModelsimAlteraExecutable(String executable, ModelsimAlteraExtension options) {
         ArrayList<String> subDirectories = new ArrayList<String>(options.paths)
         ArrayList<String> foundInstances = new ArrayList<String>()
 
@@ -28,7 +28,7 @@ class QuartusUtils {
 
             for (File path : baseFile.listFiles()) {
                 if (!path.isDirectory() && matches(baseFile.getName(), executable)) foundInstances.add(path.getAbsolutePath())
-                if (QUARTUS_DIRS.contains(baseFile.getName()) || QUARTUS_DIRS.contains(path.getName()) || i < baseCount) {
+                if (MODELSIM_ALTERA_DIRS.contains(baseFile.getName()) || MODELSIM_ALTERA_DIRS.contains(path.getName()) || i < baseCount) {
                     if (!subDirectories.contains(path.getAbsolutePath())) subDirectories.add(path.getAbsolutePath())
                 }
             }
@@ -43,12 +43,13 @@ class QuartusUtils {
         }
 
         if (foundInstances.empty) {
-            throw new RuntimeException("Could not locate Quartus Executable. Please define your local Installation Path.")
+		println "3"
+            throw new RuntimeException("Could not locate ModelsimAltera Executable. Please define your local Installation Path.")
         } else if (foundInstances.size() > 1) {
             for (String instance : foundInstances) {
                 System.err.println(instance)
             }
-            throw new RuntimeException("Multiple Quartus Installations found. Please define your local Installation Path.")
+            throw new RuntimeException("Multiple ModelsimAltera Installations found. Please define your local Installation Path.")
         }
 
         return foundInstances.get(0)
