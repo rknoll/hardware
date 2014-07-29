@@ -5,4 +5,5 @@ import org.gradle.api.NamedDomainObjectSet;
 
 public interface HardwareCompiler {
 	String getName();
+	String getDescription();
 }

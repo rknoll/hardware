@@ -8,15 +8,16 @@ import org.gradle.api.tasks.SourceSetContainer;
 import org.gradle.internal.reflect.Instantiator;
 
 public class DefaultHardwareCompilerContainer extends AbstractNamedDomainObjectContainer<HardwareCompiler> implements HardwareCompilerContainer {
+	private final Instantiator instantiator;
+
 	public DefaultHardwareCompilerContainer(Instantiator classGenerator) {
 		super(HardwareCompiler.class, classGenerator, new Namer<HardwareCompiler>() { public String determineName(HardwareCompiler compiler) { return compiler.getName(); }});
+		this.instantiator = classGenerator;
 	}
-	
-	@Override
-    protected HardwareCompiler doCreate(String name) {
-        //DefaultSourceSet sourceSet = instantiator.newInstance(DefaultSourceSet.class, name, fileResolver);
-        //sourceSet.setClasses(instantiator.newInstance(DefaultSourceSetOutput.class, sourceSet.getDisplayName(), fileResolver, taskResolver));
 
-        return null;//sourceSet;
-    }
+	@Override
+	protected HardwareCompiler doCreate(String name) {
+		DefaultHardwareCompiler compiler = instantiator.newInstance(DefaultHardwareCompiler.class, name);
+		return compiler;
+	}
 }

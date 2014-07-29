@@ -8,7 +8,7 @@ import org.gradle.internal.reflect.Instantiator
 class HardwarePluginConvention {
     ProjectInternal project
     final SourceSetContainer sourceSets
-    final SourceSetContainer hardwareCompilers
+    final HardwareCompilerContainer hardwareCompilers
 
     HardwarePluginConvention(ProjectInternal project, Instantiator instantiator) {
         this.project = project
