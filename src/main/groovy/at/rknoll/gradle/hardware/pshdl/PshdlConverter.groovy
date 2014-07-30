@@ -15,23 +15,30 @@ import org.slf4j.LoggerFactory
 class PshdlConverter {
 	private Project project
     protected Logger logger
+	private ArrayList<String> files
 
 	public PshdlConverter(Project project) {
 		this.project = project
         logger = LoggerFactory.getLogger('pshdl-logger')
+		files = new ArrayList<String>()
 	}
 
-	public File convert(File file) {
+	public File prepareConvert(File file) {
 		if (!file.name.endsWith(".pshdl")) return null
+		File destDir = project.file("generated/pshdl")
+		File destFile = new File(destDir, file.name.substring(0, file.name.length() - 5) + "vhdl")
+		files.add(file.getAbsolutePath())
+		return destFile
+	}
 
+	public void convert() {
 		def pshdlPath = PshdlUtils.findPshdlExecutable("pshdl.jar", project.pshdl as PshdlExtension)
 
 		File destDir = project.file("generated/pshdl")
 		destDir.mkdirs()
 
-		File destFile = new File(destDir, file.name.substring(0, file.name.length() - 5) + "vhdl")
-
-        def args = ["java", "-jar", pshdlPath, "vhdl", "-o", destDir.getAbsolutePath(), file.getAbsolutePath()]
+        def args = ["java", "-jar", pshdlPath, "vhdl", "-o", destDir.getAbsolutePath()]
+		files.each { args.add(it) }
 
         new ByteArrayOutputStream().withStream { os ->
             ExecResult result = project.exec {
@@ -43,12 +50,10 @@ class PshdlConverter {
             String output = os.toString()
             int exitCode = result.getExitValue()
 
-            if (exitCode != 0) {
+            if (exitCode != 0 || output.contains("ERROR at line")) {
                 throw new RuntimeException("Error " + exitCode + " while executing '" + args.join(" ") + "'\noutput:\n" + output);
             }
         }
 
-		return destFile
 	}
-
 }

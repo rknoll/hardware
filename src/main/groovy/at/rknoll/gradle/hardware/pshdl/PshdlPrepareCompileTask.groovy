@@ -22,7 +22,7 @@ class PshdlPrepareCompileTask extends SourceTask {
 		project.hardwareSources.addVertex(pshdlPkg)
 
         sources.visit { file ->
-			File destFile = converter.convert(file.file)
+			File destFile = converter.prepareConvert(file.file)
 			if (destFile != null) {
 				project.hardwareSources.addVertex(destFile)
 				project.hardwareSources.addEdge(pshdlPkg, destFile);
@@ -32,6 +32,8 @@ class PshdlPrepareCompileTask extends SourceTask {
 				project.hardwareSources.addEdge(destFile, file.file);
 			}
         }
+
+		converter.convert()
     }
 
 }
