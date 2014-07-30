@@ -30,6 +30,7 @@ class PshdlPlugin implements Plugin<Project> {
 		project.getPlugins().apply(HardwarePlugin.class);
         HardwarePluginConvention hardwareConvention = project.getConvention().getPlugin(HardwarePluginConvention.class)
 
+        project.extensions.pshdl = new PshdlExtension()
 		HardwareCompilerContainer compilers = hardwareConvention.getHardwareCompilers()
 
 		if (compilers.find { "pshdl".equals(it.name) } == null) {

@@ -5,26 +5,32 @@ import org.gradle.api.tasks.SourceTask
 import org.gradle.api.tasks.TaskAction
 
 class PshdlPrepareCompileTask extends SourceTask {
-
     @TaskAction
     def compile() {
-        println "-- Pshdl Prepare Compile --"
-		
+		PshdlConverter converter = new PshdlConverter(project);
+
 		File destDir = project.file("generated/pshdl")
 		if (destDir.isDirectory()) destDir.deleteDir()
 		destDir.mkdirs()
 
         FileTree sources = getSource()
+		URL url = this.getClass().getResource("/at/rknoll/gradle/hardware/pshdl/pshdl_pkg.vhd");
+		File pshdlPkgResource = new File(url.getFile());
+		File pshdlPkg = new File(destDir, "pshdl_pkg.vhd");
+		pshdlPkg.bytes = pshdlPkgResource.bytes
+		
+		project.hardwareSources.addVertex(pshdlPkg)
 
         sources.visit { file ->
-			println "found Pshdl source: $file.name"
-			File destFile = new File(destDir, file.name + ".vhdl")
-			destFile.bytes = file.file.bytes
-			project.hardwareSources.addVertex(destFile)
+			File destFile = converter.convert(file.file)
+			if (destFile != null) {
+				project.hardwareSources.addVertex(destFile)
+				project.hardwareSources.addEdge(pshdlPkg, destFile);
 
-			// so that other sources can reference the pshdl source as dependency..
-			project.hardwareSources.addVertex(file.file)
-			project.hardwareSources.addEdge(destFile, file.file);
+				// so that other sources can reference the pshdl source as dependency..
+				project.hardwareSources.addVertex(file.file)
+				project.hardwareSources.addEdge(destFile, file.file);
+			}
         }
     }
 

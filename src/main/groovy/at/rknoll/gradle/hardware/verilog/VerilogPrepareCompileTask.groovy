@@ -8,12 +8,9 @@ class VerilogPrepareCompileTask extends SourceTask {
 
     @TaskAction
     def compile() {
-        println "-- Verilog Prepare Compile --"
-
         FileTree sources = getSource()
 
         sources.visit { file ->
-			println "found Verilog source: $file.name"
 			project.hardwareSources.addVertex(file.file)
         }
     }

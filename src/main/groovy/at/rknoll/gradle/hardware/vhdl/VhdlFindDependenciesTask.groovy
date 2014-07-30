@@ -8,8 +8,6 @@ class VhdlFindDependenciesTask extends SourceTask {
 
     @TaskAction
     def compile() {
-        println "-- Vhdl Find Dependencies --"
-
         FileTree sources = getSource()
 
         sources.visit { file ->

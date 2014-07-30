@@ -42,6 +42,10 @@ class ModelsimAlteraCompilerImpl implements HardwareCompilerImpl {
 	public ModelsimAlteraCompilerImpl(Project project) {
 		this.project = project
         logger = LoggerFactory.getLogger('modelsimaltera-logger')
+		File compileDir = project.file("compile")
+		if (compileDir.isDirectory()) {
+			while(compileDir.isDirectory()) compileDir.deleteDir()
+		}
 	}
 
 	public boolean prepareWork() {
@@ -51,8 +55,8 @@ class ModelsimAlteraCompilerImpl implements HardwareCompilerImpl {
 			throw new RuntimeException("Invalid compile directory '" + compileDir.getAbsolutePath() + "'. If this is a File, please remove it.")
 		}
 
-		if (compileDir.exists()) compileDir.deleteDir()
-		if (!compileDir.exists()) compileDir.mkdir()
+		if (compileDir.exists()) return true
+		compileDir.mkdir()
 
         def args = [modelsimAlteraPath, "work"]
 
@@ -70,8 +74,6 @@ class ModelsimAlteraCompilerImpl implements HardwareCompilerImpl {
             if (exitCode != 0) {
                 throw new RuntimeException("Error " + exitCode + " while executing '" + args.join(" ") + "'\noutput:\n" + output);
             }
-
-            //logger.print("ModelsimAltera output:\n" + output)
         }
 
 		return true
@@ -80,8 +82,6 @@ class ModelsimAlteraCompilerImpl implements HardwareCompilerImpl {
 	public boolean compile(File file) {
 		SourceFileInfo info = new SourceFileInfo(file)
 		if (info.type == SourceFileType.UNKNOWN) return false
-
-		//println "-- ModelsimAltera Compile --"
 
 		if (!prepareWork()) return false
 
@@ -117,8 +117,6 @@ class ModelsimAlteraCompilerImpl implements HardwareCompilerImpl {
             if (exitCode != 0) {
                 throw new RuntimeException("Error " + exitCode + " while executing '" + args.join(" ") + "'\noutput:\n" + output);
             }
-
-            //logger.print("ModelsimAltera output:\n" + output)
         }
 
 		return true

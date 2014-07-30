@@ -8,8 +8,6 @@ class VerilogFindDependenciesTask extends SourceTask {
 
     @TaskAction
     def compile() {
-        println "-- Verilog Find Dependencies --"
-
         FileTree sources = getSource()
 
         sources.visit { file ->

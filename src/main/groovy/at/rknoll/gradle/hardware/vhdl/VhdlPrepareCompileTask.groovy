@@ -8,12 +8,9 @@ class VhdlPrepareCompileTask extends SourceTask {
 
     @TaskAction
     def compile() {
-        println "-- Vhdl Prepare Compile --"
-		
         FileTree sources = getSource()
 
         sources.visit { file ->
-			println "found Vhdl source: $file.name"
 			project.hardwareSources.addVertex(file.file)
         }
     }

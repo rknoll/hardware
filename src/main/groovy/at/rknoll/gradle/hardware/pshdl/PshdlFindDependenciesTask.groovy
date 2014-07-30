@@ -8,8 +8,6 @@ class PshdlFindDependenciesTask extends SourceTask {
 
     @TaskAction
     def compile() {
-        println "-- Pshdl Find Dependencies --"
-
         FileTree sources = getSource()
 
         sources.visit { file ->

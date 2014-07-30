@@ -11,10 +11,6 @@ class HardwareCompileTask extends SourceTask {
 
     @TaskAction
     def compile() {
-        println "-- Hardware Compile --"
-		
-		println project.hardwareSources
-		
 		CycleDetector<File, DefaultEdge> cycleDetector = new CycleDetector<File, DefaultEdge>(project.hardwareSources);
 		if (cycleDetector.detectCycles()) {
 			throw new RuntimeException("Detected cycles in source dependencies. Please resolve them.")
@@ -25,7 +21,7 @@ class HardwareCompileTask extends SourceTask {
 		orderIterator = new TopologicalOrderIterator<File, DefaultEdge>(project.hardwareSources)
 		while (orderIterator.hasNext()) {
 			file = orderIterator.next();
-			println "$file"
+			println "compiling $file.name"
 			if (project.hardwareCompilers.find { it.compile(file) } == null) {
 				println "could not compile $file.name"
 			}
