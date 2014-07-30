@@ -24,6 +24,7 @@ class HardwarePlugin implements Plugin<Project> {
 	}
 
 	public void apply(Project project) {
+		project.getPlugins().apply(BasePlugin.class);
 		HardwarePluginConvention hardwareConvention = new HardwarePluginConvention((ProjectInternal) project, instantiator);
         project.getConvention().getPlugins().put("hardware", hardwareConvention);
 
@@ -38,9 +39,14 @@ class HardwarePlugin implements Plugin<Project> {
             container.create(SourceSet.TEST_SOURCE_SET_NAME);
         }
 
+		project.configurations {
+			compile
+		}
+
 		DefaultTask prepareTask = project.getTasks().create(PREPARE_TASK_NAME, DefaultTask.class);
 		prepareTask.setDescription("Prepares to Compile this project.");
 		prepareTask.setGroup(HardwarePlugin.PREPARE_GROUP_NAME);
+		prepareTask.dependsOn(BasePlugin.ASSEMBLE_TASK_NAME);
 
 		HardwareCompileTask compile = project.getTasks().create(BUILD_TASK_NAME, HardwareCompileTask.class);
         compile.setDescription("Builds this project.");
