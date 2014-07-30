@@ -9,6 +9,7 @@ class ModelsimAlteraUtils {
     private static boolean matches(String filename, String executable) {
         if (executable.lastIndexOf('.') <= 0) {
             int pos = filename.lastIndexOf('.');
+			if (pos > 0 && filename.substring(pos) != ".exe") return false
             filename = pos > 0 ? filename.substring(0, pos) : filename;
         }
         return executable.equals(filename)
@@ -34,16 +35,7 @@ class ModelsimAlteraUtils {
             }
         }
 
-        if (!options.use32bit) {
-            if (foundInstances.find { it.contains(File.separator + "bin64" + File.separator) }) {
-                foundInstances.removeAll { it.contains(File.separator + "bin" + File.separator) }
-            }
-        } else {
-            foundInstances.removeAll { it.contains(File.separator + "bin64" + File.separator) }
-        }
-
         if (foundInstances.empty) {
-		println "3"
             throw new RuntimeException("Could not locate ModelsimAltera Executable. Please define your local Installation Path.")
         } else if (foundInstances.size() > 1) {
             for (String instance : foundInstances) {

@@ -13,6 +13,7 @@ apply plugin: 'idea'
 dependencies {
 	compile gradleApi()
 	compile localGroovy()
+	compile group: 'org.jgrapht', name: 'jgrapht-core', version: '0.9.0'
 }
 
 repositories {

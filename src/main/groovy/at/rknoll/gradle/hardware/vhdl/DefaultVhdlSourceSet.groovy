@@ -10,7 +10,9 @@ public class DefaultVhdlSourceSet implements VhdlSourceSet {
 
     public DefaultVhdlSourceSet(String displayName, FileResolver fileResolver) {
         vhdl = new DefaultSourceDirectorySet(String.format("%s Vhdl source", displayName), fileResolver)
-        vhdl.getFilter().include("**/*.vhdl", "**/*.vhd")
+		VhdlSourceSet.EXTENSIONS.each {
+			vhdl.getFilter().include("**/*" + it)
+		}
     }
 
     public SourceDirectorySet getVhdl() {

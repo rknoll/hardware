@@ -10,6 +10,7 @@ import org.gradle.api.internal.plugins.DslObject
 import org.gradle.api.internal.tasks.DefaultSourceSet
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.SourceSetContainer
+import org.gradle.api.plugins.BasePlugin
 
 import javax.inject.Inject
 
@@ -29,27 +30,29 @@ class VerilogPlugin implements Plugin<Project> {
         HardwarePluginConvention hardwareConvention = project.getConvention().getPlugin(HardwarePluginConvention.class)
         SourceSetContainer container = hardwareConvention.getSourceSets()
 
-        // create main and test source sets if not already defined
-        if (container.find { SourceSet.MAIN_SOURCE_SET_NAME.equals(it.name) } == null) {
-            container.create(SourceSet.MAIN_SOURCE_SET_NAME);
-        }
-
-        if (container.find { SourceSet.TEST_SOURCE_SET_NAME.equals(it.name) } == null) {
-            container.create(SourceSet.TEST_SOURCE_SET_NAME);
-        }
-
         container.all(new Action<SourceSet>() {
 			public void execute(SourceSet sourceSet) {
 				final DefaultVerilogSourceSet verilogSourceSet = new DefaultVerilogSourceSet(((DefaultSourceSet) sourceSet).getDisplayName(), fileResolver);
                 new DslObject(sourceSet).getConvention().getPlugins().put("verilog", verilogSourceSet);
 
                 verilogSourceSet.getVerilog().srcDir(String.format("src/%s/verilog", sourceSet.getName()));
+				sourceSet.getAllSource().source(verilogSourceSet.getVerilog());
 
-                String compileTaskName = sourceSet.getCompileTaskName("verilog");
-                VerilogCompileTask compile = project.getTasks().create(compileTaskName, VerilogCompileTask.class);
-                compile.setDescription(String.format("Compiles the %s Verilog source.", sourceSet.getName()));
-                compile.setSource(verilogSourceSet.getVerilog());
-            }
+                String prepareTaskName = "prepare" + sourceSet.getName().toLowerCase().capitalize() + "VerilogCompile";
+                VerilogPrepareCompileTask prepare = project.getTasks().create(prepareTaskName, VerilogPrepareCompileTask.class);
+                prepare.setDescription(String.format("Prepares to Compile the %s Verilog source.", sourceSet.getName()));
+                prepare.setSource(verilogSourceSet.getVerilog());
+				prepare.setGroup(HardwarePlugin.PREPARE_GROUP_NAME);
+				project.getTasks().getByName(HardwarePlugin.PREPARE_TASK_NAME).dependsOn(prepareTaskName);
+
+				String dependenciesTaskName = "find" + sourceSet.getName().toLowerCase().capitalize() + "VerilogDependencies";
+                VerilogFindDependenciesTask dependencies = project.getTasks().create(dependenciesTaskName, VerilogFindDependenciesTask.class);
+                dependencies.setDescription(String.format("Finds dependencies of the %s Verilog source.", sourceSet.getName()));
+                dependencies.setSource(verilogSourceSet.getVerilog());
+				dependencies.setGroup(HardwarePlugin.DEPENDENCIES_GROUP_NAME);
+                project.getTasks().getByName(HardwarePlugin.BUILD_TASK_NAME).dependsOn(dependenciesTaskName);
+                dependencies.dependsOn(HardwarePlugin.PREPARE_TASK_NAME);
+			}
         });
 	}
 

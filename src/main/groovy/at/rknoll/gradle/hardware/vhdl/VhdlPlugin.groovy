@@ -10,6 +10,7 @@ import org.gradle.api.internal.plugins.DslObject
 import org.gradle.api.internal.tasks.DefaultSourceSet
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.SourceSetContainer
+import org.gradle.api.plugins.BasePlugin
 
 import javax.inject.Inject
 
@@ -29,28 +30,29 @@ class VhdlPlugin implements Plugin<Project> {
         HardwarePluginConvention hardwareConvention = project.getConvention().getPlugin(HardwarePluginConvention.class)
         SourceSetContainer container = hardwareConvention.getSourceSets()
 
-        // create main and test source sets if not already defined
-        if (container.find { SourceSet.MAIN_SOURCE_SET_NAME.equals(it.name) } == null) {
-            container.create(SourceSet.MAIN_SOURCE_SET_NAME);
-        }
-
-        if (container.find { SourceSet.TEST_SOURCE_SET_NAME.equals(it.name) } == null) {
-            container.create(SourceSet.TEST_SOURCE_SET_NAME);
-        }
-
         container.all(new Action<SourceSet>() {
             public void execute(SourceSet sourceSet) {
                 final DefaultVhdlSourceSet vhdlSourceSet = new DefaultVhdlSourceSet(((DefaultSourceSet) sourceSet).getDisplayName(), fileResolver);
                 new DslObject(sourceSet).getConvention().getPlugins().put("vhdl", vhdlSourceSet);
 
                 vhdlSourceSet.getVhdl().srcDir(String.format("src/%s/vhdl", sourceSet.getName()));
+				sourceSet.getAllSource().source(vhdlSourceSet.getVhdl());
 
-                String compileTaskName = sourceSet.getCompileTaskName("vhdl");
-                VhdlCompileTask compile = project.getTasks().create(compileTaskName, VhdlCompileTask.class);
-                compile.setDescription(String.format("Compiles the %s Vhdl source.", sourceSet.getName()));
-                compile.setSource(vhdlSourceSet.getVhdl());
-                project.getTasks().getByName(HardwarePlugin.BUILD_TASK_NAME).dependsOn(compileTaskName);
-            }
+                String prepareTaskName = "prepare" + sourceSet.getName().toLowerCase().capitalize() + "VhdlCompile";
+                VhdlPrepareCompileTask prepare = project.getTasks().create(prepareTaskName, VhdlPrepareCompileTask.class);
+                prepare.setDescription(String.format("Prepares to Compile the %s Vhdl source.", sourceSet.getName()));
+                prepare.setSource(vhdlSourceSet.getVhdl());
+				prepare.setGroup(HardwarePlugin.PREPARE_GROUP_NAME);
+                project.getTasks().getByName(HardwarePlugin.PREPARE_TASK_NAME).dependsOn(prepareTaskName);
+
+                String dependenciesTaskName = "find" + sourceSet.getName().toLowerCase().capitalize() + "VhdlDependencies";
+                VhdlFindDependenciesTask dependencies = project.getTasks().create(dependenciesTaskName, VhdlFindDependenciesTask.class);
+                dependencies.setDescription(String.format("Finds dependencies of the %s Vhdl source.", sourceSet.getName()));
+                dependencies.setSource(vhdlSourceSet.getVhdl());
+				dependencies.setGroup(HardwarePlugin.DEPENDENCIES_GROUP_NAME);
+                project.getTasks().getByName(HardwarePlugin.BUILD_TASK_NAME).dependsOn(dependenciesTaskName);
+                dependencies.dependsOn(HardwarePlugin.PREPARE_TASK_NAME);
+			}
         });
     }
 

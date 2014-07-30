@@ -5,13 +5,18 @@ import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.internal.reflect.Instantiator
 import javax.inject.Inject
 import org.gradle.api.plugins.BasePlugin
+import org.gradle.api.tasks.SourceSet
+import org.gradle.api.tasks.SourceSetContainer
 
 /**
  * Created by rknoll on 20/07/14.
  */
 class HardwarePlugin implements Plugin<Project> {
 	private final Instantiator instantiator;
+	public static final String PREPARE_TASK_NAME = "prepareHardwareCompile";
 	public static final String BUILD_TASK_NAME = "build";
+	public static final String PREPARE_GROUP_NAME = "Prepare Compile";
+	public static final String DEPENDENCIES_GROUP_NAME = "Dependencies";
 
 	@Inject
 	public HardwarePlugin(Instantiator instantiator) {
@@ -22,8 +27,25 @@ class HardwarePlugin implements Plugin<Project> {
 		HardwarePluginConvention hardwareConvention = new HardwarePluginConvention((ProjectInternal) project, instantiator);
         project.getConvention().getPlugins().put("hardware", hardwareConvention);
 
-		DefaultTask buildTask = project.getTasks().create(BUILD_TASK_NAME, DefaultTask.class);
-        buildTask.setDescription("Builds this project.");
-        buildTask.setGroup(BasePlugin.BUILD_GROUP);
+		SourceSetContainer container = hardwareConvention.getSourceSets()
+
+        // create main and test source sets if not already defined
+        if (container.find { SourceSet.MAIN_SOURCE_SET_NAME.equals(it.name) } == null) {
+            container.create(SourceSet.MAIN_SOURCE_SET_NAME);
+        }
+
+        if (container.find { SourceSet.TEST_SOURCE_SET_NAME.equals(it.name) } == null) {
+            container.create(SourceSet.TEST_SOURCE_SET_NAME);
+        }
+
+		DefaultTask prepareTask = project.getTasks().create(PREPARE_TASK_NAME, DefaultTask.class);
+		prepareTask.setDescription("Prepares to Compile this project.");
+		prepareTask.setGroup(HardwarePlugin.PREPARE_GROUP_NAME);
+
+		HardwareCompileTask compile = project.getTasks().create(BUILD_TASK_NAME, HardwareCompileTask.class);
+        compile.setDescription("Builds this project.");
+        compile.setGroup(BasePlugin.BUILD_GROUP);
+		compile.setSource(project.sourceSets.main.getAllSource());
+		compile.dependsOn(PREPARE_TASK_NAME);
 	}
 }
