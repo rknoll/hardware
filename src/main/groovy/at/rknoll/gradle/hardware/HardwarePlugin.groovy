@@ -1,12 +1,12 @@
 package at.rknoll.gradle.hardware
 
 import org.gradle.api.*
+import org.gradle.api.tasks.*
+import org.gradle.api.tasks.bundling.*
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.internal.reflect.Instantiator
 import javax.inject.Inject
 import org.gradle.api.plugins.BasePlugin
-import org.gradle.api.tasks.SourceSet
-import org.gradle.api.tasks.SourceSetContainer
 
 /**
  * Created by rknoll on 20/07/14.
@@ -41,17 +41,29 @@ class HardwarePlugin implements Plugin<Project> {
 
 		project.configurations {
 			compile
+			archives
+			delegate.default.extendsFrom(archives)
 		}
 
 		DefaultTask prepareTask = project.getTasks().create(PREPARE_TASK_NAME, DefaultTask.class);
 		prepareTask.setDescription("Prepares to Compile this project.");
 		prepareTask.setGroup(HardwarePlugin.PREPARE_GROUP_NAME);
-		prepareTask.dependsOn(BasePlugin.ASSEMBLE_TASK_NAME);
+		prepareTask.dependsOn(project.configurations.compile);
 
 		HardwareCompileTask compile = project.getTasks().create(BUILD_TASK_NAME, HardwareCompileTask.class);
         compile.setDescription("Builds this project.");
         compile.setGroup(BasePlugin.BUILD_GROUP);
 		compile.setSource(project.sourceSets.main.getAllSource());
 		compile.dependsOn(PREPARE_TASK_NAME);
+
+		Task zipTask = project.getTasks().create("sources", Zip.class);
+		zipTask.setDescription("Zips all sources of this project.");
+		zipTask.setGroup(HardwarePlugin.DEPENDENCIES_GROUP_NAME);
+		zipTask.dependsOn(compile);
+		zipTask.from project.sourceSets.main.allSource
+
+		project.artifacts {
+			archives zipTask
+		}
 	}
 }
