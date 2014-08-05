@@ -16,9 +16,7 @@ class HardwareCompileTask extends SourceTask {
 		DOTExporter exporter = new DOTExporter(new VertexNameProvider<File>() {
 			String getVertexName(File file) {
 				String filename = file.name
-				int pos = filename.lastIndexOf('.');
-				filename = pos > 0 ? filename.substring(0, pos) : filename;
-				return filename.replace('-', '_')
+				return filename.replace('-', '_').replace('.', '_')
 			}
 		}, null, null, null, null);
 		File graphDir = new File(project.projectDir, "graph")

@@ -56,14 +56,6 @@ class PshdlPlugin implements Plugin<Project> {
                 prepare.setSource(pshdlSourceSet.getPshdl());
 				prepare.setGroup(HardwarePlugin.PREPARE_GROUP_NAME);
                 project.getTasks().getByName(HardwarePlugin.PREPARE_TASK_NAME).dependsOn(prepareTaskName);
-
-                String dependenciesTaskName = "find" + sourceSet.getName().toLowerCase().capitalize() + "PshdlDependencies";
-                PshdlFindDependenciesTask dependencies = project.getTasks().create(dependenciesTaskName, PshdlFindDependenciesTask.class);
-                dependencies.setDescription(String.format("Finds dependencies of the %s Pshdl source.", sourceSet.getName()));
-                dependencies.setSource(pshdlSourceSet.getPshdl());
-				dependencies.setGroup(HardwarePlugin.DEPENDENCIES_GROUP_NAME);
-                project.getTasks().getByName(HardwarePlugin.BUILD_TASK_NAME).dependsOn(dependenciesTaskName);
-                dependencies.dependsOn(HardwarePlugin.PREPARE_TASK_NAME);
 			}
         });
     }
