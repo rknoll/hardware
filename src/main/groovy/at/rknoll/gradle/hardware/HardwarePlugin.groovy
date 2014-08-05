@@ -45,7 +45,7 @@ class HardwarePlugin implements Plugin<Project> {
 			delegate.default.extendsFrom(archives)
 		}
 
-		DefaultTask prepareTask = project.getTasks().create(PREPARE_TASK_NAME, DefaultTask.class);
+		HardwarePrepareCompileTask prepareTask = project.getTasks().create(PREPARE_TASK_NAME, HardwarePrepareCompileTask.class);
 		prepareTask.setDescription("Prepares to Compile this project.");
 		prepareTask.setGroup(HardwarePlugin.PREPARE_GROUP_NAME);
 		prepareTask.dependsOn(project.configurations.compile);
