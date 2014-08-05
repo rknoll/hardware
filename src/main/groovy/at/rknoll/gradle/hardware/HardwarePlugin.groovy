@@ -55,6 +55,7 @@ class HardwarePlugin implements Plugin<Project> {
 		prepareTask.setGroup(HardwarePlugin.PREPARE_GROUP_NAME);
 		prepareTask.dependsOn(project.configurations.compile);
 		prepareTask.outputs.dir new File(project.projectDir, "libs/")
+		prepareTask.outputs.upToDateWhen { false }
 		project.tasks.clean.dependsOn('cleanPrepareHardwareCompile')
 
 		HardwareCompileTask compile = project.getTasks().create(BUILD_TASK_NAME, HardwareCompileTask.class);

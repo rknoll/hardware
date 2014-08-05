@@ -27,6 +27,7 @@ class VhdlFindDependenciesTask extends SourceTask {
 		def definesUnits = [:]
 
 		for (File file : project.hardwareSources.vertexSet()) {
+			if (!VhdlUtils.isVhdlFile(file)) continue
 			String fileContents = file.text
 			dependsOn[file] = []
 			definesUnits[file] = []
