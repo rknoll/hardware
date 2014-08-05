@@ -63,6 +63,9 @@ class HardwarePlugin implements Plugin<Project> {
         compile.setGroup(BasePlugin.BUILD_GROUP);
 		compile.setSource(project.sourceSets.main.getAllSource());
 		compile.dependsOn(PREPARE_TASK_NAME);
+		compile.outputs.dir new File(project.projectDir, "graph/")
+		compile.outputs.upToDateWhen { false }
+		project.tasks.clean.dependsOn('cleanBuild')
 
 		Task zipTask = project.getTasks().create("sources", Zip.class);
 		zipTask.setDescription("Zips all sources of this project.");

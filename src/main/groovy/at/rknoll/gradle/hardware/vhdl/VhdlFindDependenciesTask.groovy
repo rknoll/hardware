@@ -36,7 +36,7 @@ class VhdlFindDependenciesTask extends SourceTask {
 			dependsOn[file].each { depId ->
 				definesUnits.each { defFile, unitList ->
 					if (unitList.contains(depId)) {
-						project.hardwareSources.addEdge(defFile, file);
+						if (!project.hardwareSources.containsEdge(defFile, file)) project.hardwareSources.addEdge(defFile, file);
 					}
 				}
 			}

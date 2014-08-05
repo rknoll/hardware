@@ -21,9 +21,9 @@ class HardwareCompileTask extends SourceTask {
 				return filename.replace('-', '_')
 			}
 		}, null, null, null, null);
-		String targetDirectory = "graph/";
-		new File(targetDirectory).mkdirs();
-		exporter.export(new FileWriter(targetDirectory + "dependencies.dot"), project.hardwareSources);
+		File graphDir = new File(project.projectDir, "graph")
+		graphDir.mkdirs();
+		exporter.export(new FileWriter(new File(graphDir, "dependencies.dot")), project.hardwareSources);
 
 		CycleDetector<File, DefaultEdge> cycleDetector = new CycleDetector<File, DefaultEdge>(project.hardwareSources);
 		if (cycleDetector.detectCycles()) {
