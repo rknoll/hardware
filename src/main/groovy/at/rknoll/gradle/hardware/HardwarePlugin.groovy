@@ -7,6 +7,7 @@ import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.internal.reflect.Instantiator
 import javax.inject.Inject
 import org.gradle.api.plugins.BasePlugin
+import org.gradle.api.plugins.MavenPlugin
 
 /**
  * Created by rknoll on 20/07/14.
@@ -25,6 +26,7 @@ class HardwarePlugin implements Plugin<Project> {
 
 	public void apply(Project project) {
 		project.getPlugins().apply(BasePlugin.class);
+		project.getPlugins().apply(MavenPlugin.class);
 		HardwarePluginConvention hardwareConvention = new HardwarePluginConvention((ProjectInternal) project, instantiator);
         project.getConvention().getPlugins().put("hardware", hardwareConvention);
 
