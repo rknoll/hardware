@@ -6,6 +6,13 @@ class PshdlUtils {
         [ "pshdl" ] as String []
     ));
 
+    public static boolean isPshdlFile(File file) {
+		String fileName = file.getAbsolutePath()
+		return PshdlSourceSet.EXTENSIONS.find {
+			return fileName.endsWith(it)
+		} != null
+    }
+
     private static boolean matches(String filename, String executable) {
         if (executable.lastIndexOf('.') <= 0) {
             int pos = filename.lastIndexOf('.');

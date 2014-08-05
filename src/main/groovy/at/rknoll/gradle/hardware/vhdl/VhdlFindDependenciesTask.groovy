@@ -12,8 +12,6 @@ class VhdlFindDependenciesTask extends SourceTask {
 
     @TaskAction
     def compile() {
-        FileTree sources = getSource()
-
 		def dependsOn = [:]
 		def definesUnits = [:]
 

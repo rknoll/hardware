@@ -16,6 +16,7 @@ class HardwarePlugin implements Plugin<Project> {
 	private final Instantiator instantiator;
 	public static final String PREPARE_TASK_NAME = "prepareHardwareCompile";
 	public static final String BUILD_TASK_NAME = "build";
+	public static final String EXTRACT_DEPS_TASK_NAME = "extractDependencies";
 	public static final String PREPARE_GROUP_NAME = "Prepare Compile";
 	public static final String DEPENDENCIES_GROUP_NAME = "Dependencies";
 
@@ -50,13 +51,18 @@ class HardwarePlugin implements Plugin<Project> {
 			delegate.default.extendsFrom(runtime)
 		}
 
-		HardwarePrepareCompileTask prepareTask = project.getTasks().create(PREPARE_TASK_NAME, HardwarePrepareCompileTask.class);
+		HardwarePrepareCompileTask extractDependencies = project.getTasks().create(EXTRACT_DEPS_TASK_NAME, HardwarePrepareCompileTask.class);
+		extractDependencies.setDescription("Extracts all dependencies of this project.");
+		extractDependencies.setGroup(HardwarePlugin.PREPARE_GROUP_NAME);
+		extractDependencies.dependsOn(project.configurations.compile);
+		extractDependencies.outputs.dir new File(project.projectDir, "libs")
+		extractDependencies.outputs.upToDateWhen { false }
+		project.tasks.clean.dependsOn('cleanExtractDependencies')
+
+		DefaultTask prepareTask = project.getTasks().create(PREPARE_TASK_NAME, DefaultTask.class);
 		prepareTask.setDescription("Prepares to Compile this project.");
 		prepareTask.setGroup(HardwarePlugin.PREPARE_GROUP_NAME);
-		prepareTask.dependsOn(project.configurations.compile);
-		prepareTask.outputs.dir new File(project.projectDir, "libs/")
-		prepareTask.outputs.upToDateWhen { false }
-		project.tasks.clean.dependsOn('cleanPrepareHardwareCompile')
+		prepareTask.dependsOn(EXTRACT_DEPS_TASK_NAME);
 
 		HardwareCompileTask compile = project.getTasks().create(BUILD_TASK_NAME, HardwareCompileTask.class);
         compile.setDescription("Builds this project.");
