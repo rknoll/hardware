@@ -36,6 +36,8 @@ class VhdlFindDependenciesTask extends SourceTask {
 				if (matcher.matches()) dependsOn[file].add(matcher[0][1].toLowerCase())
 				matcher = (it =~ /(?:(?:^(?:(?:entity)|(?:package)))|(?:^[\s\t]*(?:(?:[^-].*)|(?:-[^-]+.*)|(?:-$))(?:(?:entity)|(?:package))))[\s\t]+([^\s\t]+)[\s\t]+is.*/);
 				if (matcher.matches()) definesUnits[file].add(matcher[0][1].toLowerCase())
+				matcher = (it =~ /(?:(?:^(?:architecture))|(?:^[\s\t]*(?:(?:[^-].*)|(?:-[^-]+.*)|(?:-$))(?:architecture)))[\s\t]+(?:[^\s\t]+)[\s\t]+of[\s\t]+([^\s\t]+)[\s\t]+is.*/);
+				if (matcher.matches() && !definesUnits[file].contains(matcher[0][1].toLowerCase())) dependsOn[file].add(matcher[0][1].toLowerCase())
 			}
 		}
 
