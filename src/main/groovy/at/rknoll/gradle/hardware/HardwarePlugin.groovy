@@ -44,7 +44,10 @@ class HardwarePlugin implements Plugin<Project> {
 		project.configurations {
 			compile
 			archives
-			delegate.default.extendsFrom(archives)
+			runtime.extendsFrom(compile)
+			testCompile.extendsFrom(compile)
+			testRuntime.extendsFrom(runtime, testCompile)
+			delegate.default.extendsFrom(runtime)
 		}
 
 		HardwarePrepareCompileTask prepareTask = project.getTasks().create(PREPARE_TASK_NAME, HardwarePrepareCompileTask.class);
@@ -65,7 +68,7 @@ class HardwarePlugin implements Plugin<Project> {
 		zipTask.from project.sourceSets.main.allSource
 
 		project.artifacts {
-			archives zipTask
+			runtime zipTask
 		}
 	}
 }
