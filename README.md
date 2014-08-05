@@ -1,1 +1,1 @@
-Quartus Plugin for Gradle
+Hardware Plugin for Gradle
