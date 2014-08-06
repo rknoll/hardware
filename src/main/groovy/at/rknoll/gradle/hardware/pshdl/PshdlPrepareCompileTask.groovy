@@ -12,13 +12,6 @@ class PshdlPrepareCompileTask extends DefaultTask {
 
 		File destDir = project.file("generated/pshdl")
 		if (destDir.isDirectory()) destDir.deleteDir()
-		destDir.mkdirs()
-
-		InputStream resourceStream = this.getClass().getResourceAsStream("/at/rknoll/gradle/hardware/pshdl/pshdl_pkg.vhd")
-		File pshdlPkg = new File(destDir, "pshdl_pkg.vhd")
-		Files.copy(resourceStream, pshdlPkg.getAbsoluteFile().toPath())
-		
-		project.hardwareSources.addVertex(pshdlPkg)
 
 		def allPshdlFiles = []
 
@@ -31,10 +24,19 @@ class PshdlPrepareCompileTask extends DefaultTask {
 			allPshdlFiles.add(file)
 		}
 
+		File pshdlPkg = null;
+
 		for (File file : allPshdlFiles) {
 			if (!PshdlUtils.isPshdlFile(file)) continue
 			File destFile = converter.prepareConvert(file)
 			if (destFile != null) {
+				if (pshdlPkg == null) {
+					destDir.mkdirs()
+					InputStream resourceStream = this.getClass().getResourceAsStream("/at/rknoll/gradle/hardware/pshdl/pshdl_pkg.vhd")
+					pshdlPkg = new File(destDir, "pshdl_pkg.vhd")
+					Files.copy(resourceStream, pshdlPkg.getAbsoluteFile().toPath())
+					project.hardwareSources.addVertex(pshdlPkg)
+				}
 				project.hardwareSources.addVertex(destFile)
 				project.hardwareSources.addEdge(pshdlPkg, destFile);
 
