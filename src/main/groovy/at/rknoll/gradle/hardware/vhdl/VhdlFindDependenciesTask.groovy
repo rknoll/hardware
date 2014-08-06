@@ -21,15 +21,34 @@ class VhdlFindDependenciesTask extends DefaultTask {
 			dependsOn[file] = []
 			definesUnits[file] = []
 			fileContents.replace('\r','').tokenize('\n').each {
+
 				Matcher matcher = (it =~ /^[\s\t]*(?:(?:[^-].*)|(?:-[^-]+.*)|(?:-$))work\.([^\.\s\t\(]+).*/);
-				if (matcher.matches() && !definesUnits[file].contains(matcher[0][1].toLowerCase())) dependsOn[file].add(matcher[0][1].toLowerCase())
+				if (matcher.matches()) {
+					String matching = matcher[0][1].toLowerCase();
+					if (!definesUnits[file].contains(matching) && !dependsOn[file].contains(matching)) {
+						dependsOn[file].add(matching);
+					}
+				}
+
 				matcher = (it =~ /(?:(?:^(?:(?:entity)|(?:package)))|(?:^[\s\t]*(?:(?:[^-].*)|(?:-[^-]+.*)|(?:-$))(?:(?:entity)|(?:package))))[\s\t]+(?:(?:([^\s\t]+)[\s\t]+is)|(?:body[\s\t]+([^\s\t]+)[\s\t]+is)).*/);
 				if (matcher.matches()) {
-					if (matcher[0][1] != null) definesUnits[file].add(matcher[0][1].toLowerCase())
-					if (matcher[0][2] != null && !definesUnits[file].contains(matcher[0][2].toLowerCase())) dependsOn[file].add(matcher[0][2].toLowerCase())
+					String matching = matcher[0][1] == null ? null : matcher[0][1].toLowerCase();
+					if (matching != null && !definesUnits[file].contains(matching)) {
+						definesUnits[file].add(matching);
+					}
+					matching = matcher[0][2] == null ? null : matcher[0][2].toLowerCase();
+					if (matching != null && !definesUnits[file].contains(matching) && !dependsOn[file].contains(matching)) {
+						dependsOn[file].add(matching);
+					}
 				}
+
 				matcher = (it =~ /(?:(?:^(?:architecture))|(?:^[\s\t]*(?:(?:[^-].*)|(?:-[^-]+.*)|(?:-$))(?:architecture)))[\s\t]+(?:[^\s\t]+)[\s\t]+of[\s\t]+([^\s\t]+)[\s\t]+is.*/);
-				if (matcher.matches() && !definesUnits[file].contains(matcher[0][1].toLowerCase())) dependsOn[file].add(matcher[0][1].toLowerCase())
+				if (matcher.matches()) {
+					String matching = matcher[0][1].toLowerCase();
+					if (!definesUnits[file].contains(matching) && !dependsOn[file].contains(matching)) {
+						dependsOn[file].add(matching);
+					}
+				}
 			}
 		}
 
