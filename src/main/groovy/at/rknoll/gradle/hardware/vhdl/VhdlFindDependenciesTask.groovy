@@ -1,14 +1,14 @@
 package at.rknoll.gradle.hardware.vhdl
 
 import org.gradle.api.file.FileTree
-import org.gradle.api.tasks.SourceTask
+import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
 import org.jgrapht.alg.CycleDetector
 import org.jgrapht.graph.DefaultEdge
 import org.jgrapht.traverse.TopologicalOrderIterator
 import java.util.regex.Matcher
 
-class VhdlFindDependenciesTask extends SourceTask {
+class VhdlFindDependenciesTask extends DefaultTask {
 
     @TaskAction
     def compile() {

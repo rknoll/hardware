@@ -48,7 +48,6 @@ class VhdlPlugin implements Plugin<Project> {
                 String dependenciesTaskName = "find" + sourceSet.getName().toLowerCase().capitalize() + "VhdlDependencies";
                 VhdlFindDependenciesTask dependencies = project.getTasks().create(dependenciesTaskName, VhdlFindDependenciesTask.class);
                 dependencies.setDescription(String.format("Finds dependencies of the %s Vhdl source.", sourceSet.getName()));
-                dependencies.setSource(vhdlSourceSet.getVhdl());
 				dependencies.setGroup(HardwarePlugin.DEPENDENCIES_GROUP_NAME);
                 project.getTasks().getByName(HardwarePlugin.BUILD_TASK_NAME).dependsOn(dependenciesTaskName);
                 dependencies.dependsOn(HardwarePlugin.PREPARE_TASK_NAME);

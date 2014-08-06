@@ -48,7 +48,6 @@ class VerilogPlugin implements Plugin<Project> {
 				String dependenciesTaskName = "find" + sourceSet.getName().toLowerCase().capitalize() + "VerilogDependencies";
                 VerilogFindDependenciesTask dependencies = project.getTasks().create(dependenciesTaskName, VerilogFindDependenciesTask.class);
                 dependencies.setDescription(String.format("Finds dependencies of the %s Verilog source.", sourceSet.getName()));
-                dependencies.setSource(verilogSourceSet.getVerilog());
 				dependencies.setGroup(HardwarePlugin.DEPENDENCIES_GROUP_NAME);
                 project.getTasks().getByName(HardwarePlugin.BUILD_TASK_NAME).dependsOn(dependenciesTaskName);
                 dependencies.dependsOn(HardwarePlugin.PREPARE_TASK_NAME);
