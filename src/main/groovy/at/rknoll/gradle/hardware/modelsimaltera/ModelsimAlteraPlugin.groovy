@@ -23,6 +23,9 @@ class ModelsimAlteraPlugin implements Plugin<Project> {
 			});
 		}
 
+		project.tasks.sources.from(new File(project.file("compile"), ModelsimAlteraUtils.getLibraryName(project.group, project.name))) {
+			into 'compile/' + ModelsimAlteraUtils.getLibraryName(project.group, project.name)
+		}
 	}
 
 }

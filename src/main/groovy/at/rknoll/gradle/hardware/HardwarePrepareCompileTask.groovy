@@ -10,16 +10,23 @@ class HardwarePrepareCompileTask extends DefaultTask {
     def compile() {
 		project.copy {
 			from {
-				project.configurations.compile.collect { project.zipTree(it) }
+				project.configurations.compile.collect { project.zipTree(it).matching{exclude{it.path.contains('compile')}} }
 			}
 			into new File(project.projectDir, "libs/")
 		}
-		
-		FileTree sources = project.fileTree(dir: 'libs')
+
+		project.copy {
+			from {
+				project.configurations.compile.collect { project.zipTree(it).matching{include{it.path.contains('compile')}} }
+			}
+			into project.projectDir
+		}
+
+		/*FileTree sources = project.fileTree(dir: 'libs')
 
 		sources.visit { file ->
 			project.hardwareSources.addVertex(file.file)
-		}
+		}*/
 
     }
 

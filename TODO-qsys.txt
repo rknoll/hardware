@@ -1,0 +1,5 @@
+
+C:\altera\13.1\quartus\sopc_builder\bin\ip-generate --project-directory=. --output-directory=generated\qsys --report-file=bsf:generated\qsys\LaserFpga.bsf --component-file=src\LaserFpga.qsys
+
+C:\altera\13.1\quartus\sopc_builder\bin\ip-generate --project-directory=. --output-directory=generated\qsys\system --report-file=bsf:generated\qsys\LaserFpga.bsf --file-set=SIM_VHDL --report-file=sopcinfo:generated\qsys\LaserFpga.sopcinfo --report-file=dot:generated\qsys\LaserFpga.dot --report-file=html:generated\qsys\LaserFpga.html --report-file=cmp:generated\qsys\LaserFpga.cmp --cache=generated\qsys\cache.tmp --language=VHDL --component-file=src\LaserFpga.qsys
+
