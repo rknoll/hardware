@@ -7,6 +7,7 @@ import org.jgrapht.alg.CycleDetector
 import org.jgrapht.graph.DefaultEdge
 import org.jgrapht.traverse.TopologicalOrderIterator
 import java.util.regex.Matcher
+import java.util.regex.Pattern
 
 class VhdlFindDependenciesTask extends DefaultTask {
 
@@ -20,17 +21,39 @@ class VhdlFindDependenciesTask extends DefaultTask {
 			String fileContents = file.text
 			dependsOn[file] = []
 			definesUnits[file] = []
+			println "analyzing " + file.name + "..."
+			Pattern p1 = Pattern.compile(/(?:(?:^(?:use))|(?:^[\s\t]*(?:(?:[^-].*)|(?:-[^-]+.*)|(?:-$))(?:use)))[\s\t]+([^\.\s\t]+)\.([^\.\s\t\(]+)\..*/);
+			Pattern p2 = Pattern.compile(/(?:(?:^(?:entity))|(?:^[\s\t]*(?:(?:[^-].*)|(?:-[^-]+.*)|(?:-$))(?:.*entity)))[\s\t]+([^\.\s\t]+)\.([^\.\s\t\(]+).*/);
+			Pattern p3 = Pattern.compile(/(?:(?:^(?:(?:entity)|(?:package)))|(?:^[\s\t]*(?:(?:[^-].*)|(?:-[^-]+.*)|(?:-$))(?:(?:entity)|(?:package))))[\s\t]+(?:(?:([^\s\t]+)[\s\t]+is)|(?:body[\s\t]+([^\s\t]+)[\s\t]+is)).*/);
+			Pattern p4 = Pattern.compile(/(?:(?:^(?:architecture))|(?:^[\s\t]*(?:(?:[^-].*)|(?:-[^-]+.*)|(?:-$))(?:architecture)))[\s\t]+(?:[^\s\t]+)[\s\t]+of[\s\t]+([^\s\t]+)[\s\t]+is.*/);
+			Pattern p5 = Pattern.compile(/(?:(?:^(?:component))|(?:^[\s\t]*(?:(?:[^-].*)|(?:-[^-]+.*)|(?:-$))(?:component)))[\s\t]+([^\s\t]+).*/);
+			
 			fileContents.replace('\r','').tokenize('\n').each {
+				// prepare for matching, remove comments
+				it = it.trim();
+				if (it.startsWith("--")) return
+				def commentStart = it.indexOf("--")
+				if (commentStart >= 0) it = it.substring(0, commentStart)
 
-				Matcher matcher = (it =~ /^[\s\t]*(?:(?:[^-].*)|(?:-[^-]+.*)|(?:-$))work\.([^\.\s\t\(]+).*/);
+				Matcher matcher = p1.matcher(it)
 				if (matcher.matches()) {
-					String matching = matcher[0][1].toLowerCase();
+					if (!matcher[0][1].toLowerCase().equals("ieee")) {
+						String matching = matcher[0][2].toLowerCase();
+						if (!definesUnits[file].contains(matching) && !dependsOn[file].contains(matching)) {
+							dependsOn[file].add(matching);
+						}
+					}
+				}
+
+				matcher = p2.matcher(it)
+				if (matcher.matches()) {
+					String matching = matcher[0][2].toLowerCase();
 					if (!definesUnits[file].contains(matching) && !dependsOn[file].contains(matching)) {
 						dependsOn[file].add(matching);
 					}
 				}
 
-				matcher = (it =~ /(?:(?:^(?:(?:entity)|(?:package)))|(?:^[\s\t]*(?:(?:[^-].*)|(?:-[^-]+.*)|(?:-$))(?:(?:entity)|(?:package))))[\s\t]+(?:(?:([^\s\t]+)[\s\t]+is)|(?:body[\s\t]+([^\s\t]+)[\s\t]+is)).*/);
+				matcher = p3.matcher(it)
 				if (matcher.matches()) {
 					String matching = matcher[0][1] == null ? null : matcher[0][1].toLowerCase();
 					if (matching != null && !definesUnits[file].contains(matching)) {
@@ -42,7 +65,15 @@ class VhdlFindDependenciesTask extends DefaultTask {
 					}
 				}
 
-				matcher = (it =~ /(?:(?:^(?:architecture))|(?:^[\s\t]*(?:(?:[^-].*)|(?:-[^-]+.*)|(?:-$))(?:architecture)))[\s\t]+(?:[^\s\t]+)[\s\t]+of[\s\t]+([^\s\t]+)[\s\t]+is.*/);
+				matcher = p4.matcher(it)
+				if (matcher.matches()) {
+					String matching = matcher[0][1].toLowerCase();
+					if (!definesUnits[file].contains(matching) && !dependsOn[file].contains(matching)) {
+						dependsOn[file].add(matching);
+					}
+				}
+
+				matcher = p5.matcher(it)
 				if (matcher.matches()) {
 					String matching = matcher[0][1].toLowerCase();
 					if (!definesUnits[file].contains(matching) && !dependsOn[file].contains(matching)) {
