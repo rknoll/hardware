@@ -32,6 +32,8 @@ class PshdlConverter {
 	}
 
 	public void convert() {
+		if (files.isEmpty()) return
+
 		def pshdlPath = PshdlUtils.findPshdlExecutable("pshdl.jar", project.pshdl as PshdlExtension)
 
 		File destDir = project.file("generated/pshdl")
