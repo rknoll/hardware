@@ -1,11 +1,15 @@
 group = 'at.rknoll.gradle'
 version = '0.1'
 
-if (hasProperty('teamcity') && !property('teamcity')['build.number'].startsWith(version + "-")) {
-	version += '-' + property('teamcity')['build.number']
-	println "##teamcity[buildNumber '" + version + "']"
+if (hasProperty('teamcity')) {
+	if (!property('teamcity')['build.number'].startsWith(version + "-")) {
+		version += '-' + property('teamcity')['build.number']
+		println "##teamcity[buildNumber '" + version + "']"
+	} else {
+		version = property('teamcity')['build.number']
+	}
 } else {
-	version = property('teamcity')['build.number']
+	version += '-SNAPSHOT'
 }
 
 apply plugin: 'groovy'
