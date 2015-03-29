@@ -13,6 +13,27 @@ import org.slf4j.LoggerFactory
 class QuartusSynthesizeTask extends DefaultTask {
     protected Logger logger
 
+    def runQuartus(args) {
+        File base = project.file('syn')
+        new ByteArrayOutputStream().withStream { os ->
+            ExecResult result = project.exec {
+                commandLine = args
+                standardOutput = os
+                ignoreExitValue = true
+                workingDir = base
+            }
+
+            String output = os.toString()
+            int exitCode = result.getExitValue()
+
+            if (exitCode != 0) {
+                throw new TaskExecutionException(this, new Exception("Error " + exitCode + " while executing '" + args.join(" ") + "'\noutput:\n" + output));
+            }
+
+            logger.print("quartus output:\n" + output)
+        }
+    }
+
 	@TaskAction
 	def synthesize() {
         logger = LoggerFactory.getLogger('quartus-logger')
@@ -41,30 +62,11 @@ class QuartusSynthesizeTask extends DefaultTask {
             String relative = FileUtils.getRelativePath(file.path, base.path, file.separator)
             sources << "--source=" + relative
         }
-        println sources
 
-        //quartus_sh --flow compile
-
-        def args = [quartusMap, toplevel, sources].flatten()
-
-        new ByteArrayOutputStream().withStream { os ->
-            ExecResult result = project.exec {
-                commandLine = args
-                standardOutput = os
-                ignoreExitValue = true
-                workingDir = base
-            }
-
-            String output = os.toString()
-            int exitCode = result.getExitValue()
-
-            if (exitCode != 0) {
-                throw new TaskExecutionException(this, new Exception("Error " + exitCode + " while executing '" + args.join(" ") + "'\noutput:\n" + output));
-            }
-
-            logger.print("quartus output:\n" + output)
-        }
-
+        runQuartus([quartusMap, toplevel, sources].flatten())
+        runQuartus([quartusFit, toplevel])
+        runQuartus([quartusAsm, toplevel])
+        runQuartus([quartusSta, toplevel])
 	}
 
 }
