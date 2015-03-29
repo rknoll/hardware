@@ -22,11 +22,11 @@ class HardwarePrepareCompileTask extends DefaultTask {
 			into project.projectDir
 		}
 
-		/*FileTree sources = project.fileTree(dir: 'libs')
+		FileTree sources = project.fileTree(dir: 'libs')
 
 		sources.visit { file ->
 			project.hardwareSources.addVertex(file.file)
-		}*/
+		}
 
     }
 

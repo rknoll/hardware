@@ -14,6 +14,6 @@ import org.slf4j.LoggerFactory
 
 class PshdlDummyCompilerImpl implements HardwareCompilerImpl {
 	public boolean compile(File file) {
-		return file.name.endsWith(".pshdl")
+		return (PshdlSourceSet.EXTENSIONS.find { file.name.endsWith(it) } != null);
 	}
 }

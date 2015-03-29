@@ -53,7 +53,7 @@ class HardwarePlugin implements Plugin<Project> {
 
 		HardwarePrepareCompileTask extractDependencies = project.getTasks().create(EXTRACT_DEPS_TASK_NAME, HardwarePrepareCompileTask.class);
 		extractDependencies.setDescription("Extracts all dependencies of this project.");
-		extractDependencies.setGroup(HardwarePlugin.PREPARE_GROUP_NAME);
+		extractDependencies.setGroup(PREPARE_GROUP_NAME);
 		extractDependencies.dependsOn(project.configurations.compile);
 		extractDependencies.outputs.dir new File(project.projectDir, "libs")
 		extractDependencies.outputs.upToDateWhen { false }
@@ -61,7 +61,7 @@ class HardwarePlugin implements Plugin<Project> {
 
 		DefaultTask prepareTask = project.getTasks().create(PREPARE_TASK_NAME, DefaultTask.class);
 		prepareTask.setDescription("Prepares to Compile this project.");
-		prepareTask.setGroup(HardwarePlugin.PREPARE_GROUP_NAME);
+		prepareTask.setGroup(PREPARE_GROUP_NAME);
 		prepareTask.dependsOn(EXTRACT_DEPS_TASK_NAME);
 
 		HardwareCompileTask compile = project.getTasks().create(BUILD_TASK_NAME, HardwareCompileTask.class);
@@ -69,14 +69,14 @@ class HardwarePlugin implements Plugin<Project> {
         compile.setGroup(BasePlugin.BUILD_GROUP);
 		compile.setSource(project.sourceSets.main.getAllSource());
 		compile.dependsOn(PREPARE_TASK_NAME);
-		compile.outputs.dir new File(project.projectDir, "graph/")
-		compile.outputs.dir new File(project.projectDir, "compile/")
+		compile.outputs.dir new File(project.projectDir, "graph")
+		compile.outputs.dir new File(project.projectDir, "compile")
 		compile.outputs.upToDateWhen { false }
 		project.tasks.clean.dependsOn('cleanBuild')
 
 		Task zipTask = project.getTasks().create("sources", Zip.class);
 		zipTask.setDescription("Zips all sources of this project.");
-		zipTask.setGroup(HardwarePlugin.DEPENDENCIES_GROUP_NAME);
+		zipTask.setGroup(DEPENDENCIES_GROUP_NAME);
 		zipTask.dependsOn(compile);
 		zipTask.from project.sourceSets.main.allSource
 

@@ -1,23 +1,19 @@
-package at.rknoll.gradle.hardware.modelsimaltera
+package at.rknoll.gradle.hardware.questasim
 
 import at.rknoll.gradle.hardware.HardwareCompilerImpl
 import at.rknoll.gradle.hardware.verilog.VerilogSourceSet
 import at.rknoll.gradle.hardware.vhdl.VhdlSourceSet
-import java.io.File
 import org.gradle.api.Project
-import org.gradle.api.DefaultTask
-import org.gradle.api.tasks.TaskAction
-import org.gradle.api.tasks.TaskExecutionException
 import org.gradle.process.ExecResult
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
-class ModelsimAlteraCompilerImpl implements HardwareCompilerImpl {
+class QuestasimCompilerImpl implements HardwareCompilerImpl {
 	private Project project
     protected Logger logger
-	protected String modelsimAlteraPathVLib
-	protected String modelsimAlteraPathVMap
-	def modelsimAlteraPathCompiler = [:]
+	protected String questasimPathVLib
+	protected String questasimPathVMap
+	def questasimPathCompiler = [:]
 	protected String libraryName
 	protected File compileDir
 	private enum SourceFileType {
@@ -43,20 +39,20 @@ class ModelsimAlteraCompilerImpl implements HardwareCompilerImpl {
 
 	}
 
-	public ModelsimAlteraCompilerImpl(Project project) {
+	public QuestasimCompilerImpl(Project project) {
 		this.project = project
-        logger = LoggerFactory.getLogger('modelsimaltera-logger')
+        logger = LoggerFactory.getLogger('questasim-logger')
 		compileDir = project.file("compile")
 		if (!compileDir.exists()) compileDir.mkdir()
 		if (compileDir.isFile()) {
 			throw new RuntimeException("Invalid compile directory '" + compileDir.getAbsolutePath() + "'. If this is a File, please remove it.")
 		}
-		libraryName = ModelsimAlteraUtils.getLibraryName(project.group, project.name);
+		libraryName = QuestasimUtils.getLibraryName(project.group, project.name);
 	}
 
 	private void mapLibrary(String name, String path) {
-		if (modelsimAlteraPathVMap == null) modelsimAlteraPathVMap = ModelsimAlteraUtils.findModelsimAlteraExecutable("vmap", project.modelsimaltera as ModelsimAlteraExtension)
-        def args = [modelsimAlteraPathVMap, name, path]
+		if (questasimPathVMap == null) questasimPathVMap = QuestasimUtils.findQuestasimExecutable("vmap", project.questasim as QuestasimExtension)
+        def args = [questasimPathVMap, name, path]
         new ByteArrayOutputStream().withStream { os ->
             ExecResult result = project.exec {
 				workingDir = compileDir.getAbsolutePath()
@@ -75,11 +71,11 @@ class ModelsimAlteraCompilerImpl implements HardwareCompilerImpl {
 	}
 
 	public boolean prepareWork() {
-		if (modelsimAlteraPathVLib == null) modelsimAlteraPathVLib = ModelsimAlteraUtils.findModelsimAlteraExecutable("vlib", project.modelsimaltera as ModelsimAlteraExtension)
+		if (questasimPathVLib == null) questasimPathVLib = QuestasimUtils.findQuestasimExecutable("vlib", project.questasim as QuestasimExtension)
 
 		if ((new File(compileDir, libraryName)).exists()) return true
 
-        def args = [modelsimAlteraPathVLib, libraryName]
+        def args = [questasimPathVLib, libraryName]
 		println "creating work library.."
 
         new ByteArrayOutputStream().withStream { os ->
@@ -119,7 +115,7 @@ class ModelsimAlteraCompilerImpl implements HardwareCompilerImpl {
 
 		if (compiler == null) return false
 
-		if (modelsimAlteraPathCompiler[compiler] == null) modelsimAlteraPathCompiler[compiler] = ModelsimAlteraUtils.findModelsimAlteraExecutable(compiler, project.modelsimaltera as ModelsimAlteraExtension)
+		if (questasimPathCompiler[compiler] == null) questasimPathCompiler[compiler] = QuestasimUtils.findQuestasimExecutable(compiler, project.questasim as QuestasimExtension)
 
 		File compileDir = project.file("compile")
 		if (!compileDir.isDirectory()) {
@@ -139,7 +135,7 @@ class ModelsimAlteraCompilerImpl implements HardwareCompilerImpl {
 		}
 		*/
 
-        def args = [modelsimAlteraPathCompiler[compiler], file.getAbsolutePath()]
+        def args = [questasimPathCompiler[compiler], file.getAbsolutePath()]
 
         new ByteArrayOutputStream().withStream { os ->
             ExecResult result = project.exec {

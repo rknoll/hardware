@@ -27,15 +27,20 @@ class HardwareCompileTask extends SourceTask {
 		if (cycleDetector.detectCycles()) {
 			throw new RuntimeException("Detected cycles in source dependencies. Please resolve them.")
 		}
-		
+
 		File file
 		TopologicalOrderIterator<File, DefaultEdge> orderIterator
 		orderIterator = new TopologicalOrderIterator<File, DefaultEdge>(project.hardwareSources)
 		while (orderIterator.hasNext()) {
 			file = orderIterator.next();
 			println "compiling $file.name"
-			if (project.hardwareCompilers.find { it.compile(file) } == null) {
-				println "could not compile $file.name"
+			def compatibleCompilers = project.hardwareCompilers.findAll { it.compile(file) }
+			if (compatibleCompilers.size() == 0) {
+				throw new RuntimeException("could not find a compiler for $file.name")
+			} else if (compatibleCompilers.size() != 1) {
+				throw new RuntimeException("multiple compilers found for $file.name [" + compatibleCompilers.name.join(', ') + "]")
+			} else {
+				println "compiled using " + compatibleCompilers[0].name
 			}
 		}
     }
