@@ -10,7 +10,6 @@ import org.gradle.api.internal.plugins.DslObject
 import org.gradle.api.internal.tasks.DefaultSourceSet
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.SourceSetContainer
-import org.gradle.api.plugins.BasePlugin
 
 import javax.inject.Inject
 
@@ -49,7 +48,7 @@ class VhdlPlugin implements Plugin<Project> {
                 VhdlFindDependenciesTask dependencies = project.getTasks().create(dependenciesTaskName, VhdlFindDependenciesTask.class);
                 dependencies.setDescription(String.format("Finds dependencies of the %s Vhdl source.", sourceSet.getName()));
 				dependencies.setGroup(HardwarePlugin.DEPENDENCIES_GROUP_NAME);
-                project.getTasks().getByName(HardwarePlugin.BUILD_TASK_NAME).dependsOn(dependenciesTaskName);
+                project.getTasks().getByName(HardwarePlugin.HARDWARE_COMPILE_TASK_NAME).dependsOn(dependenciesTaskName);
                 dependencies.dependsOn(HardwarePlugin.PREPARE_TASK_NAME);
 			}
         });

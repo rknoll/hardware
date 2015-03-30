@@ -15,7 +15,7 @@ import org.gradle.api.plugins.MavenPlugin
 class HardwarePlugin implements Plugin<Project> {
 	private final Instantiator instantiator;
 	public static final String PREPARE_TASK_NAME = "prepareHardwareCompile";
-	public static final String BUILD_TASK_NAME = "build";
+	public static final String HARDWARE_COMPILE_TASK_NAME = "hardwareCompile";
 	public static final String EXTRACT_DEPS_TASK_NAME = "extractDependencies";
 	public static final String PREPARE_GROUP_NAME = "Prepare Compile";
 	public static final String DEPENDENCIES_GROUP_NAME = "Dependencies";
@@ -64,8 +64,8 @@ class HardwarePlugin implements Plugin<Project> {
 		prepareTask.setGroup(PREPARE_GROUP_NAME);
 		prepareTask.dependsOn(EXTRACT_DEPS_TASK_NAME);
 
-		HardwareCompileTask compile = project.getTasks().create(BUILD_TASK_NAME, HardwareCompileTask.class);
-        compile.setDescription("Builds this project.");
+		HardwareCompileTask compile = project.getTasks().create(HARDWARE_COMPILE_TASK_NAME, HardwareCompileTask.class);
+        compile.setDescription("Compile Hardware.");
         compile.setGroup(BasePlugin.BUILD_GROUP);
 		compile.setSource(project.sourceSets.main.getAllSource());
 		compile.dependsOn(PREPARE_TASK_NAME);
@@ -73,6 +73,14 @@ class HardwarePlugin implements Plugin<Project> {
 		compile.outputs.dir new File(project.projectDir, "compile")
 		compile.outputs.upToDateWhen { false }
 		project.tasks.clean.dependsOn('cleanBuild')
+
+		if (project.tasks.findByName("build") == null) {
+			DefaultTask build = project.getTasks().create("build", DefaultTask.class);
+			build.setDescription("Builds this project.");
+			build.setGroup(BasePlugin.BUILD_GROUP);
+		}
+
+		project.tasks.build.dependsOn compile
 
 		Task zipTask = project.getTasks().create("sources", Zip.class);
 		zipTask.setDescription("Zips all sources of this project.");
