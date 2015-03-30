@@ -55,6 +55,7 @@ class PshdlPlugin implements Plugin<Project> {
                 PshdlPrepareCompileTask prepare = project.getTasks().create(prepareTaskName, PshdlPrepareCompileTask.class);
                 prepare.setDescription(String.format("Prepares to Compile the %s Pshdl source.", sourceSet.getName()));
 				prepare.setGroup(HardwarePlugin.PREPARE_GROUP_NAME);
+				prepare.setSource(pshdlSourceSet.getPshdl());
                 project.getTasks().getByName(HardwarePlugin.PREPARE_TASK_NAME).dependsOn(prepareTaskName);
 				prepare.outputs.dir new File(project.projectDir, "generated/")
 				prepare.outputs.upToDateWhen { false }

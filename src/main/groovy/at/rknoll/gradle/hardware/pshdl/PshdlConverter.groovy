@@ -15,19 +15,21 @@ import org.slf4j.LoggerFactory
 class PshdlConverter {
 	private Project project
     protected Logger logger
-	private ArrayList<String> files
+	private Map<String, ArrayList<String>> files
 
 	public PshdlConverter(Project project) {
 		this.project = project
         logger = LoggerFactory.getLogger('pshdl-logger')
-		files = new ArrayList<String>()
+		files = new HashMap<>()
 	}
 
-	public File prepareConvert(File file) {
+	public File prepareConvert(File file, File destDir) {
 		if (!file.name.endsWith(".pshdl")) return null
-		File destDir = project.file("generated/pshdl")
 		File destFile = new File(destDir, file.name.substring(0, file.name.length() - 5) + "vhdl")
-		files.add(file.getAbsolutePath())
+		if (files[destDir.getAbsolutePath()] == null) {
+			files[destDir.getAbsolutePath()] = new ArrayList<>()
+		}
+		files[destDir.getAbsolutePath()].add(file.getAbsolutePath())
 		return destFile
 	}
 
@@ -36,26 +38,29 @@ class PshdlConverter {
 
 		def pshdlPath = PshdlUtils.findPshdlExecutable("pshdl.jar", project.pshdl as PshdlExtension)
 
-		File destDir = project.file("generated/pshdl")
-		destDir.mkdirs()
+		files.each { entry ->
+			File destDir = new File(entry.key)
+			destDir.mkdirs()
 
-        def args = ["java", "-jar", pshdlPath, "vhdl", "-o", destDir.getAbsolutePath()]
-		files.each { args.add(it) }
+			def args = ["java", "-jar", pshdlPath, "vhdl", "-o", destDir.getAbsolutePath()]
+			entry.value.each { args.add(it) }
 
-        new ByteArrayOutputStream().withStream { os ->
-            ExecResult result = project.exec {
-                commandLine = args
-                standardOutput = os
-                ignoreExitValue = true
-            }
+			new ByteArrayOutputStream().withStream { os ->
+				ExecResult result = project.exec {
+					commandLine = args
+					standardOutput = os
+					ignoreExitValue = true
+				}
 
-            String output = os.toString()
-            int exitCode = result.getExitValue()
+				String output = os.toString()
+				int exitCode = result.getExitValue()
 
-            if (exitCode != 0 || output.contains("ERROR at line")) {
-                throw new RuntimeException("Error " + exitCode + " while executing '" + args.join(" ") + "'\noutput:\n" + output);
-            }
-        }
+				if (exitCode != 0 || output.contains("ERROR at line")) {
+					throw new RuntimeException("Error " + exitCode + " while executing '" + args.join(" ") + "'\noutput:\n" + output);
+				}
+			}
+		}
+
 
 	}
 }
