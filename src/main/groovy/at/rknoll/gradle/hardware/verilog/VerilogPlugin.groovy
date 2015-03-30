@@ -25,7 +25,6 @@ class VerilogPlugin implements Plugin<Project> {
 	}
 
 	public void apply(Project project) {
-		project.getPlugins().apply(HardwarePlugin.class);
         HardwarePluginConvention hardwareConvention = project.getConvention().getPlugin(HardwarePluginConvention.class)
         SourceSetContainer container = hardwareConvention.getSourceSets()
 

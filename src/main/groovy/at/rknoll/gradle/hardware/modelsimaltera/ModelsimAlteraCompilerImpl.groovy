@@ -1,6 +1,8 @@
 package at.rknoll.gradle.hardware.modelsimaltera
 
+import at.rknoll.gradle.hardware.HardwareCompilerContainer
 import at.rknoll.gradle.hardware.HardwareCompilerImpl
+import at.rknoll.gradle.hardware.HardwarePluginConvention
 import at.rknoll.gradle.hardware.HardwareUtils
 import at.rknoll.gradle.hardware.verilog.VerilogSourceSet
 import at.rknoll.gradle.hardware.vhdl.VhdlSourceSet
@@ -16,13 +18,15 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
 class ModelsimAlteraCompilerImpl implements HardwareCompilerImpl {
+	public static final String NAME = "modelsimaltera"
+
 	private Project project
     protected Logger logger
 	protected String modelsimAlteraPathVLib
 	protected String modelsimAlteraPathVMap
 	def modelsimAlteraPathCompiler = [:]
-	protected String libraryName
-	protected File compileDir
+	boolean notFound
+
 	private enum SourceFileType {
 		VHDL,
 		VERILOG,
@@ -49,9 +53,10 @@ class ModelsimAlteraCompilerImpl implements HardwareCompilerImpl {
 	public ModelsimAlteraCompilerImpl(Project project) {
 		this.project = project
         logger = LoggerFactory.getLogger('modelsimaltera-logger')
+		notFound = false
 	}
 
-	private void mapLibrary(String name, String path) {
+	private void mapLibrary(String name, String path, File compileDir) {
 		if (modelsimAlteraPathVMap == null) modelsimAlteraPathVMap = ModelsimAlteraUtils.findModelsimAlteraExecutable("vmap", project.modelsimaltera as ModelsimAlteraExtension)
         def args = [modelsimAlteraPathVMap, name, path]
         new ByteArrayOutputStream().withStream { os ->
@@ -72,16 +77,20 @@ class ModelsimAlteraCompilerImpl implements HardwareCompilerImpl {
 	}
 
 	public boolean prepareWork(File file) {
-		compileDir = project.file("compile")
+		if (modelsimAlteraPathVLib == null) modelsimAlteraPathVLib = ModelsimAlteraUtils.findModelsimAlteraExecutable("vlib", project.modelsimaltera as ModelsimAlteraExtension)
+		if (modelsimAlteraPathVLib == null) {
+			notFound = true
+			return false
+		}
+
+		def compileDir = project.file("compile")
 		if (!compileDir.exists()) compileDir.mkdir()
 		if (compileDir.isFile()) {
 			throw new RuntimeException("Invalid compile directory '" + compileDir.getAbsolutePath() + "'. If this is a File, please remove it.")
 		}
 
-		if (modelsimAlteraPathVLib == null) modelsimAlteraPathVLib = ModelsimAlteraUtils.findModelsimAlteraExecutable("vlib", project.modelsimaltera as ModelsimAlteraExtension)
-
 		def info = project.hardwareSourceInformation[file]
-		libraryName = HardwareUtils.getLibraryName(info.group, info.name);
+		def libraryName = HardwareUtils.getLibraryName(info.group, info.name);
 
 		if (!(new File(compileDir, libraryName)).exists()) {
 			def args = [modelsimAlteraPathVLib, libraryName]
@@ -104,17 +113,17 @@ class ModelsimAlteraCompilerImpl implements HardwareCompilerImpl {
 			}
 		}
 
-		mapLibrary("work", libraryName);
-		mapLibrary(libraryName, libraryName);
+		mapLibrary("work", libraryName, compileDir);
+		mapLibrary(libraryName, libraryName, compileDir);
 
 		return true
 	}
 
 	public boolean compile(File file) {
+		if (notFound) return false
+
 		SourceFileInfo info = new SourceFileInfo(file)
 		if (info.type == SourceFileType.UNKNOWN) return false
-
-		if (!prepareWork(file)) return false
 
 		String compiler = null
 
@@ -125,25 +134,14 @@ class ModelsimAlteraCompilerImpl implements HardwareCompilerImpl {
 
 		if (compiler == null) return false
 
+		if (!prepareWork(file)) return false
+
 		if (modelsimAlteraPathCompiler[compiler] == null) modelsimAlteraPathCompiler[compiler] = ModelsimAlteraUtils.findModelsimAlteraExecutable(compiler, project.modelsimaltera as ModelsimAlteraExtension)
 
 		File compileDir = project.file("compile")
 		if (!compileDir.isDirectory()) {
 			throw new RuntimeException("Invalid compile directory '" + compileDir.getAbsolutePath() + "'. If this is a File, please remove it.")
 		}
-
-		/*
-		File workDir = new File(compileDir, libraryName);
-		File infoFile = new File(workDir, "_info");
-
-		if (infoFile.isFile()) {
-			String infoContent = infoFile.text
-			if (infoContent.contains(file.getAbsolutePath())) {
-				println file.name + " UP-TO-DATE"
-				return true;
-			}
-		}
-		*/
 
         def args = [modelsimAlteraPathCompiler[compiler], file.getAbsolutePath()]
 

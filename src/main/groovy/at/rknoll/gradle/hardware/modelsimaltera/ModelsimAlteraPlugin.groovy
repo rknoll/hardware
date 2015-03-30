@@ -18,15 +18,11 @@ class ModelsimAlteraPlugin implements Plugin<Project> {
         HardwarePluginConvention hardwareConvention = project.getConvention().getPlugin(HardwarePluginConvention.class)
 		HardwareCompilerContainer compilers = hardwareConvention.getHardwareCompilers()
 
-		if (compilers.find { "modelsimaltera".equals(it.name) } == null) {
-			compilers.create("modelsimaltera", {
+		if (compilers.find { ModelsimAlteraCompilerImpl.NAME.equals(it.name) } == null) {
+			compilers.create(ModelsimAlteraCompilerImpl.NAME, {
 				it.setDescription("compile with modelsimaltera")
 				it.setHardwareCompilerImpl(new ModelsimAlteraCompilerImpl(project))
 			});
-		}
-
-		project.tasks.sources.from(new File(project.file("compile"), HardwareUtils.getLibraryName(project.group, project.name))) {
-			into 'compile/' + HardwareUtils.getLibraryName(project.group, project.name)
 		}
 	}
 

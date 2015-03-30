@@ -1,5 +1,8 @@
 package at.rknoll.gradle.hardware
 
+import at.rknoll.gradle.hardware.pshdl.PshdlPlugin
+import at.rknoll.gradle.hardware.verilog.VerilogPlugin
+import at.rknoll.gradle.hardware.vhdl.VhdlPlugin
 import org.gradle.api.*
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.bundling.*
@@ -72,7 +75,7 @@ class HardwarePlugin implements Plugin<Project> {
 		compile.outputs.dir new File(project.projectDir, "graph")
 		compile.outputs.dir new File(project.projectDir, "compile")
 		compile.outputs.upToDateWhen { false }
-		project.tasks.clean.dependsOn('cleanBuild')
+		project.tasks.clean.dependsOn('cleanHardwareCompile')
 
 		if (project.tasks.findByName("build") == null) {
 			DefaultTask build = project.getTasks().create("build", DefaultTask.class);
@@ -91,5 +94,9 @@ class HardwarePlugin implements Plugin<Project> {
 		project.artifacts {
 			runtime zipTask
 		}
+
+		project.getPlugins().apply(VhdlPlugin.class);
+		project.getPlugins().apply(VerilogPlugin.class);
+		project.getPlugins().apply(PshdlPlugin.class);
 	}
 }

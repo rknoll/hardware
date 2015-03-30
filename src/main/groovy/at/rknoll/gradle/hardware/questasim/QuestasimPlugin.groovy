@@ -22,15 +22,11 @@ class QuestasimPlugin implements Plugin<Project> {
         HardwarePluginConvention hardwareConvention = project.getConvention().getPlugin(HardwarePluginConvention.class)
 		HardwareCompilerContainer compilers = hardwareConvention.getHardwareCompilers()
 
-		if (compilers.find { "questasim".equals(it.name) } == null) {
-			compilers.create("questasim", {
+		if (compilers.find { QuestasimCompilerImpl.NAME.equals(it.name) } == null) {
+			compilers.create(QuestasimCompilerImpl.NAME, {
 				it.setDescription("compile with questasim")
 				it.setHardwareCompilerImpl(new QuestasimCompilerImpl(project))
 			});
-		}
-
-		project.tasks.sources.from(new File(project.file("compile"), HardwareUtils.getLibraryName(project.group, project.name))) {
-			into 'compile/' + HardwareUtils.getLibraryName(project.group, project.name)
 		}
 	}
 

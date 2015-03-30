@@ -36,12 +36,14 @@ class ModelsimAlteraUtils {
         }
 
         if (foundInstances.empty) {
-            throw new RuntimeException("Could not locate ModelsimAltera Executable. Please define your local Installation Path.")
+            //throw new RuntimeException("Could not locate ModelsimAltera Executable. Please define your local Installation Path.")
+            return null
         } else if (foundInstances.size() > 1) {
-            for (String instance : foundInstances) {
-                System.err.println(instance)
-            }
-            throw new RuntimeException("Multiple ModelsimAltera Installations found. Please define your local Installation Path.")
+            //for (String instance : foundInstances) {
+            //    System.err.println(instance)
+            //}
+            //throw new RuntimeException("Multiple ModelsimAltera Installations found. Please define your local Installation Path.")
+            return null
         }
 
         return foundInstances.get(0)

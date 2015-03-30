@@ -27,7 +27,6 @@ class PshdlPlugin implements Plugin<Project> {
 	}
 
 	public void apply(Project project) {
-		project.getPlugins().apply(HardwarePlugin.class);
         HardwarePluginConvention hardwareConvention = project.getConvention().getPlugin(HardwarePluginConvention.class)
 
         project.extensions.pshdl = new PshdlExtension()

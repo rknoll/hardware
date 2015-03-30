@@ -11,13 +11,12 @@ public class DefaultHardwareCompilerContainer extends AbstractNamedDomainObjectC
 	private final Instantiator instantiator;
 
 	public DefaultHardwareCompilerContainer(Instantiator classGenerator) {
-		super(HardwareCompiler.class, classGenerator, new Namer<HardwareCompiler>() { public String determineName(HardwareCompiler compiler) { return compiler.getName(); }});
+		super(HardwareCompiler.class, classGenerator, HardwareCompiler::getName);
 		this.instantiator = classGenerator;
 	}
 
 	@Override
 	protected HardwareCompiler doCreate(String name) {
-		DefaultHardwareCompiler compiler = instantiator.newInstance(DefaultHardwareCompiler.class, name);
-		return compiler;
+		return instantiator.newInstance(DefaultHardwareCompiler.class, name);
 	}
 }

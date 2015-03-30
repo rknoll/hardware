@@ -26,12 +26,6 @@ class HardwarePrepareCompileTask extends DefaultTask {
 				project.hardwareSourceInformation[file.file] = source
 				project.hardwareSources.addVertex(file.file)
 			}
-			/*
-			project.copy {
-				from { project.zipTree(art.file).matching{include{it.path.contains('compile')}} }
-				into project.projectDir
-			}
-			*/
 		}
 
     }
