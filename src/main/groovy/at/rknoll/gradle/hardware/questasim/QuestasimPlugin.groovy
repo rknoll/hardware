@@ -3,7 +3,9 @@ package at.rknoll.gradle.hardware.questasim
 import at.rknoll.gradle.hardware.HardwareCompilerContainer
 import at.rknoll.gradle.hardware.HardwarePlugin
 import at.rknoll.gradle.hardware.HardwarePluginConvention
+import at.rknoll.gradle.hardware.HardwareUtils
 import at.rknoll.gradle.hardware.toplevel.TopLevelExtension
+import at.rknoll.gradle.hardware.vhdl.VhdlUtils
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
@@ -27,8 +29,8 @@ class QuestasimPlugin implements Plugin<Project> {
 			});
 		}
 
-		project.tasks.sources.from(new File(project.file("compile"), QuestasimUtils.getLibraryName(project.group, project.name))) {
-			into 'compile/' + QuestasimUtils.getLibraryName(project.group, project.name)
+		project.tasks.sources.from(new File(project.file("compile"), HardwareUtils.getLibraryName(project.group, project.name))) {
+			into 'compile/' + HardwareUtils.getLibraryName(project.group, project.name)
 		}
 	}
 

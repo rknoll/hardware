@@ -1,5 +1,7 @@
 package at.rknoll.gradle.hardware.modelsimaltera
 
+import at.rknoll.gradle.hardware.HardwareUtils
+import at.rknoll.gradle.hardware.vhdl.VhdlUtils
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import at.rknoll.gradle.hardware.HardwareCompilerContainer
@@ -23,8 +25,8 @@ class ModelsimAlteraPlugin implements Plugin<Project> {
 			});
 		}
 
-		project.tasks.sources.from(new File(project.file("compile"), ModelsimAlteraUtils.getLibraryName(project.group, project.name))) {
-			into 'compile/' + ModelsimAlteraUtils.getLibraryName(project.group, project.name)
+		project.tasks.sources.from(new File(project.file("compile"), HardwareUtils.getLibraryName(project.group, project.name))) {
+			into 'compile/' + HardwareUtils.getLibraryName(project.group, project.name)
 		}
 	}
 

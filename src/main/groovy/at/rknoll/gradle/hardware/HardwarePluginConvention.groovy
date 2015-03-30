@@ -11,13 +11,15 @@ class HardwarePluginConvention {
     ProjectInternal project
     final SourceSetContainer sourceSets
     final HardwareCompilerContainer hardwareCompilers
-	final DefaultDirectedGraph<File, DefaultEdge> hardwareSources
+    final DefaultDirectedGraph<File, DefaultEdge> hardwareSources
+    final Map<File, HardwareSourceInformation> hardwareSourceInformation
 
     HardwarePluginConvention(ProjectInternal project, Instantiator instantiator) {
         this.project = project
         sourceSets = instantiator.newInstance(DefaultSourceSetContainer.class, project.fileResolver, project.tasks, instantiator)
 		hardwareCompilers = instantiator.newInstance(DefaultHardwareCompilerContainer.class, instantiator)
 		hardwareSources = new DefaultDirectedGraph<File, DefaultEdge>(DefaultEdge.class);
+        hardwareSourceInformation = new HashMap<>()
 	}
 
     def sourceSets(Closure closure) {

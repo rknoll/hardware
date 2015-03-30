@@ -1,16 +1,18 @@
 package at.rknoll.gradle.hardware.quartus
 
-import at.rknoll.gradle.hardware.HardwareCompileTask
+import at.rknoll.gradle.hardware.quartus.tasks.QuartusAsmTask
+import at.rknoll.gradle.hardware.quartus.tasks.QuartusFitTask
+import at.rknoll.gradle.hardware.quartus.tasks.QuartusMapTask
+import at.rknoll.gradle.hardware.quartus.tasks.QuartusStaTask
 import at.rknoll.gradle.hardware.toplevel.TopLevelExtension
+import org.gradle.api.DefaultTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import at.rknoll.gradle.hardware.HardwareCompilerContainer
-import at.rknoll.gradle.hardware.HardwarePluginConvention
 import at.rknoll.gradle.hardware.HardwarePlugin
-import org.gradle.api.plugins.BasePlugin
 
 class QuartusPlugin implements Plugin<Project> {
 	public static final String SYNTHESIZE_TASK_NAME = "synthesize";
+	public static final String SYNTHESIZE_GROUP = "synthesize";
 
 	def void apply(Project project) {
 		project.getPlugins().apply(HardwarePlugin.class);
@@ -21,19 +23,22 @@ class QuartusPlugin implements Plugin<Project> {
 			project.extensions.toplevel = new TopLevelExtension()
 		}
 
-		def synDir = project.file("syn")
-		if (!synDir.exists()) synDir.mkdir()
-		if (synDir.isFile()) {
-			throw new RuntimeException("Invalid synthesize directory '" + synDir.getAbsolutePath() + "'. If this is a File, please remove it.")
-		}
+		DefaultTask map = project.tasks.create(QuartusMapTask.TASK_NAME, QuartusMapTask.class)
+		DefaultTask fit = project.tasks.create(QuartusFitTask.TASK_NAME, QuartusFitTask.class)
+		DefaultTask asm = project.tasks.create(QuartusAsmTask.TASK_NAME, QuartusAsmTask.class)
+		DefaultTask sta = project.tasks.create(QuartusStaTask.TASK_NAME, QuartusStaTask.class)
+		DefaultTask syn = project.tasks.create(SYNTHESIZE_TASK_NAME, QuartusSynthesizeTask.class);
 
-		QuartusSynthesizeTask synthesize = project.getTasks().create(SYNTHESIZE_TASK_NAME, QuartusSynthesizeTask.class);
-		synthesize.setDescription("Synthesize this project with Quartus.");
-		synthesize.setGroup(BasePlugin.BUILD_GROUP);
-		synthesize.dependsOn(HardwarePlugin.PREPARE_TASK_NAME);
-		synthesize.outputs.dir synDir
-		synthesize.outputs.upToDateWhen { false }
+		map.dependsOn HardwarePlugin.PREPARE_TASK_NAME
+		fit.dependsOn map
+		sta.dependsOn fit
+		asm.dependsOn fit
 
+		syn.dependsOn sta, asm
+		syn.outputs.dir project.file("syn")
+		syn.outputs.upToDateWhen { false }
+
+		project.tasks.clean.dependsOn('cleanSynthesize')
 	}
 
 }

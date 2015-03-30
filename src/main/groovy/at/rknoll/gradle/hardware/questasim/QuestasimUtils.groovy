@@ -47,8 +47,4 @@ class QuestasimUtils {
         return foundInstances.get(0)
     }
 
-	public static String getLibraryName(String group, String name) {
-		return group.replace('.', '_').toLowerCase() + "_" + name.toLowerCase()
-	}
-
 }

@@ -1,5 +1,6 @@
 package at.rknoll.gradle.hardware.pshdl
 
+import at.rknoll.gradle.hardware.HardwareSourceInformation
 import org.gradle.api.file.FileTree
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
@@ -26,6 +27,11 @@ class PshdlPrepareCompileTask extends DefaultTask {
 
 		File pshdlPkg = null;
 
+		def source = new HardwareSourceInformation()
+		source.group = project.group
+		source.name = project.name
+		source.version = project.version
+
 		for (File file : allPshdlFiles) {
 			if (!PshdlUtils.isPshdlFile(file)) continue
 			File destFile = converter.prepareConvert(file)
@@ -37,10 +43,12 @@ class PshdlPrepareCompileTask extends DefaultTask {
 					Files.copy(resourceStream, pshdlPkg.getAbsoluteFile().toPath())
 					project.hardwareSources.addVertex(pshdlPkg)
 				}
+				project.hardwareSourceInformation[destFile] = source
 				project.hardwareSources.addVertex(destFile)
 				project.hardwareSources.addEdge(pshdlPkg, destFile);
 
 				// so that other sources can reference the pshdl source as dependency..
+				project.hardwareSourceInformation[file] = source
 				project.hardwareSources.addVertex(file)
 				project.hardwareSources.addEdge(destFile, file);
 			}

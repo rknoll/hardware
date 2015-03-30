@@ -8,24 +8,30 @@ class HardwarePrepareCompileTask extends DefaultTask {
 
     @TaskAction
     def compile() {
-		project.copy {
-			from {
-				project.configurations.compile.collect { project.zipTree(it).matching{exclude{it.path.contains('compile')}} }
+		def libsDirName = "libs/"
+
+		for (def art : project.configurations.compile.resolvedConfiguration.resolvedArtifacts) {
+			def moduleDirName = libsDirName + HardwareUtils.getLibraryName(art.moduleVersion.id.group, art.moduleVersion.id.name)
+			def moduleDir = new File(moduleDirName)
+			project.copy {
+				from { project.zipTree(art.file).matching{exclude{it.path.contains('compile')}} }
+				into moduleDir
 			}
-			into new File(project.projectDir, "libs/")
-		}
-
-		project.copy {
-			from {
-				project.configurations.compile.collect { project.zipTree(it).matching{include{it.path.contains('compile')}} }
+			def source = new HardwareSourceInformation()
+			source.group = art.moduleVersion.id.group
+			source.name = art.moduleVersion.id.name
+			source.version = art.moduleVersion.id.version
+			FileTree sources = project.fileTree(dir: moduleDirName)
+			sources.visit { file ->
+				project.hardwareSourceInformation[file.file] = source
+				project.hardwareSources.addVertex(file.file)
 			}
-			into project.projectDir
-		}
-
-		FileTree sources = project.fileTree(dir: 'libs')
-
-		sources.visit { file ->
-			project.hardwareSources.addVertex(file.file)
+			/*
+			project.copy {
+				from { project.zipTree(art.file).matching{include{it.path.contains('compile')}} }
+				into project.projectDir
+			}
+			*/
 		}
 
     }

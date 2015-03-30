@@ -1,8 +1,10 @@
 package at.rknoll.gradle.hardware.questasim
 
 import at.rknoll.gradle.hardware.HardwareCompilerImpl
+import at.rknoll.gradle.hardware.HardwareUtils
 import at.rknoll.gradle.hardware.verilog.VerilogSourceSet
 import at.rknoll.gradle.hardware.vhdl.VhdlSourceSet
+import at.rknoll.gradle.hardware.vhdl.VhdlUtils
 import org.gradle.api.Project
 import org.gradle.process.ExecResult
 import org.slf4j.Logger
@@ -42,12 +44,6 @@ class QuestasimCompilerImpl implements HardwareCompilerImpl {
 	public QuestasimCompilerImpl(Project project) {
 		this.project = project
         logger = LoggerFactory.getLogger('questasim-logger')
-		compileDir = project.file("compile")
-		if (!compileDir.exists()) compileDir.mkdir()
-		if (compileDir.isFile()) {
-			throw new RuntimeException("Invalid compile directory '" + compileDir.getAbsolutePath() + "'. If this is a File, please remove it.")
-		}
-		libraryName = QuestasimUtils.getLibraryName(project.group, project.name);
 	}
 
 	private void mapLibrary(String name, String path) {
@@ -70,29 +66,38 @@ class QuestasimCompilerImpl implements HardwareCompilerImpl {
         }
 	}
 
-	public boolean prepareWork() {
+	public boolean prepareWork(File file) {
+		compileDir = project.file("compile")
+		if (!compileDir.exists()) compileDir.mkdir()
+		if (compileDir.isFile()) {
+			throw new RuntimeException("Invalid compile directory '" + compileDir.getAbsolutePath() + "'. If this is a File, please remove it.")
+		}
+
 		if (questasimPathVLib == null) questasimPathVLib = QuestasimUtils.findQuestasimExecutable("vlib", project.questasim as QuestasimExtension)
 
-		if ((new File(compileDir, libraryName)).exists()) return true
+		def info = project.hardwareSourceInformation[file]
+		libraryName = HardwareUtils.getLibraryName(info.group, info.name);
 
-        def args = [questasimPathVLib, libraryName]
-		println "creating work library.."
+		if (!(new File(compileDir, libraryName)).exists()) {
+			def args = [questasimPathVLib, libraryName]
+			println "creating work library.."
 
-        new ByteArrayOutputStream().withStream { os ->
-            ExecResult result = project.exec {
-				workingDir = compileDir.getAbsolutePath()
-                commandLine = args
-                standardOutput = os
-                ignoreExitValue = true
-            }
+			new ByteArrayOutputStream().withStream { os ->
+				ExecResult result = project.exec {
+					workingDir = compileDir.getAbsolutePath()
+					commandLine = args
+					standardOutput = os
+					ignoreExitValue = true
+				}
 
-            String output = os.toString()
-            int exitCode = result.getExitValue()
+				String output = os.toString()
+				int exitCode = result.getExitValue()
 
-            if (exitCode != 0) {
-                throw new RuntimeException("Error " + exitCode + " while executing '" + args.join(" ") + "'\noutput:\n" + output);
-            }
-        }
+				if (exitCode != 0) {
+					throw new RuntimeException("Error " + exitCode + " while executing '" + args.join(" ") + "'\noutput:\n" + output);
+				}
+			}
+		}
 
 		mapLibrary("work", libraryName);
 		mapLibrary(libraryName, libraryName);
@@ -104,7 +109,7 @@ class QuestasimCompilerImpl implements HardwareCompilerImpl {
 		SourceFileInfo info = new SourceFileInfo(file)
 		if (info.type == SourceFileType.UNKNOWN) return false
 
-		if (!prepareWork()) return false
+		if (!prepareWork(file)) return false
 
 		String compiler = null
 
