@@ -71,7 +71,22 @@ pluginBundle {
         hardware {
             id = 'at.rknoll.gradle.hardware'
             displayName = 'Gradle Hardware plugin for VHDL, Verilog and PSHDL'
-            tags = ['hardware', 'vhdl', 'verilog', 'pshdl', 'altera', 'modelsim', 'questasim', 'fpga']
+            tags = ['hardware', 'vhdl', 'verilog', 'pshdl', 'fpga']
+        }
+        modelsimaltera {
+            id = 'at.rknoll.gradle.modelsimaltera'
+            displayName = 'Gradle Hardware plugin for Modelsim Altera'
+            tags = ['hardware', 'vhdl', 'verilog', 'pshdl', 'fpga', 'altera', 'modelsim']
+        }
+        questasim {
+            id = 'at.rknoll.gradle.modelsimaltera'
+            displayName = 'Gradle Hardware plugin for Questasim'
+            tags = ['hardware', 'vhdl', 'verilog', 'pshdl', 'fpga', 'questasim']
+        }
+        quartus {
+            id = 'at.rknoll.gradle.modelsimaltera'
+            displayName = 'Gradle Hardware plugin for Altera Quartus'
+            tags = ['hardware', 'vhdl', 'verilog', 'pshdl', 'fpga', 'altera', 'quartus']
         }
     }
 }
