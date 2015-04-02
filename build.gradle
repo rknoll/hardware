@@ -12,9 +12,21 @@ if (hasProperty('teamcity')) {
 	version += '-SNAPSHOT'
 }
 
+buildscript {
+    repositories {
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+    dependencies {
+        classpath "com.gradle.publish:plugin-publish-plugin:0.9.0"
+    }
+}
+
 apply plugin: 'groovy'
 apply plugin: 'maven'
 apply plugin: 'idea'
+apply plugin: 'com.gradle.plugin-publish'
 
 dependencies {
 	compile gradleApi()
@@ -26,6 +38,7 @@ dependencies {
 
 repositories {
 	mavenCentral()
+	jcenter()
 }
 
 task wrapper(type: Wrapper) {
@@ -43,4 +56,22 @@ uploadArchives {
             layout 'maven'
         }
 	}
+}
+
+gradle.publish.key = System.getenv('GRADLE_PUBLISH_KEY')
+gradle.publish.secret = System.getenv('GRADLE_PUBLISH_SECRET')
+
+pluginBundle {
+    website = 'http://gradle.rknoll.at/'
+    vcsUrl = 'http://git.rknoll.at/gradle'
+    description = 'Gradle Plugins from RKnoll'
+    tags = ['rknoll']
+
+    plugins {
+        hardware {
+            id = 'at.rknoll.gradle.hardware'
+            displayName = 'Gradle Hardware plugin for VHDL, Verilog and PSHDL'
+            tags = ['hardware', 'vhdl', 'verilog', 'pshdl', 'altera', 'modelsim', 'questasim', 'fpga']
+        }
+    }
 }
