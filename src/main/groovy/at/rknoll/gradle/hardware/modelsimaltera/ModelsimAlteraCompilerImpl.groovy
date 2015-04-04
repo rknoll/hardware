@@ -1,31 +1,24 @@
 package at.rknoll.gradle.hardware.modelsimaltera
 
-import at.rknoll.gradle.hardware.HardwareCompilerContainer
-import at.rknoll.gradle.hardware.HardwareCompilerImpl
-import at.rknoll.gradle.hardware.HardwarePluginConvention
+import at.rknoll.gradle.hardware.DefaultHardwareCompiler
+import at.rknoll.gradle.hardware.HardwareCompiler
 import at.rknoll.gradle.hardware.HardwareUtils
 import at.rknoll.gradle.hardware.verilog.VerilogSourceSet
 import at.rknoll.gradle.hardware.vhdl.VhdlSourceSet
-import at.rknoll.gradle.hardware.vhdl.VhdlUtils
-
-import java.io.File
 import org.gradle.api.Project
-import org.gradle.api.DefaultTask
-import org.gradle.api.tasks.TaskAction
-import org.gradle.api.tasks.TaskExecutionException
 import org.gradle.process.ExecResult
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
-class ModelsimAlteraCompilerImpl implements HardwareCompilerImpl {
+class ModelsimAlteraCompilerImpl implements HardwareCompiler {
 	public static final String NAME = "modelsimaltera"
 
-	private Project project
     protected Logger logger
 	protected String modelsimAlteraPathVLib
 	protected String modelsimAlteraPathVMap
 	def modelsimAlteraPathCompiler = [:]
 	boolean notFound
+	private Project project
 
 	private enum SourceFileType {
 		VHDL,

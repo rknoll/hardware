@@ -1,26 +1,23 @@
 package at.rknoll.gradle.hardware.questasim
 
-import at.rknoll.gradle.hardware.HardwareCompilerContainer
-import at.rknoll.gradle.hardware.HardwareCompilerImpl
-import at.rknoll.gradle.hardware.HardwarePluginConvention
+import at.rknoll.gradle.hardware.HardwareCompiler
 import at.rknoll.gradle.hardware.HardwareUtils
 import at.rknoll.gradle.hardware.verilog.VerilogSourceSet
 import at.rknoll.gradle.hardware.vhdl.VhdlSourceSet
-import at.rknoll.gradle.hardware.vhdl.VhdlUtils
 import org.gradle.api.Project
 import org.gradle.process.ExecResult
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
-class QuestasimCompilerImpl implements HardwareCompilerImpl {
+class QuestasimCompilerImpl implements HardwareCompiler {
 	public static final String NAME = "questasim"
 
-	private Project project
     protected Logger logger
 	protected String questasimPathVLib
 	protected String questasimPathVMap
 	def questasimPathCompiler = [:]
 	boolean notFound
+	private Project project
 
 	private enum SourceFileType {
 		VHDL,

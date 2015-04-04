@@ -35,6 +35,12 @@ class HardwareCompileTask extends SourceTask {
 			file = orderIterator.next();
 			println "compiling $file.name"
 			def compatibleCompilers = project.hardwareCompilers.findAll { it.compile(file) }
+
+			compatibleCompilers.sort()
+			for (def c : compatibleCompilers) {
+				println "Compatible: " + c.name
+			}
+
 			if (compatibleCompilers.size() == 0) {
 				throw new RuntimeException("could not find a compiler for $file.name")
 			} else if (compatibleCompilers.size() != 1) {
