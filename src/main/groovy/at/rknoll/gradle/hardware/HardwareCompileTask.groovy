@@ -34,19 +34,16 @@ class HardwareCompileTask extends SourceTask {
 		while (orderIterator.hasNext()) {
 			file = orderIterator.next();
 			println "compiling $file.name"
-			def compatibleCompilers = project.hardwareCompilers.findAll { it.compile(file) }
 
-			compatibleCompilers.sort()
-			for (def c : compatibleCompilers) {
-				println "Compatible: " + c.name
-			}
+			List<DefaultHardwareCompiler> allCompilers = new ArrayList<>((Set<DefaultHardwareCompiler>)project.hardwareCompilers);
+			allCompilers = allCompilers.sort()
 
-			if (compatibleCompilers.size() == 0) {
+			def usedCompiler = allCompilers.find { it.compile(file) }
+
+			if (usedCompiler == null) {
 				throw new RuntimeException("could not find a compiler for $file.name")
-			} else if (compatibleCompilers.size() != 1) {
-				throw new RuntimeException("multiple compilers found for $file.name [" + compatibleCompilers.name.join(', ') + "]")
 			} else {
-				println "compiled using " + compatibleCompilers[0].name
+				println "compiled using " + usedCompiler.name
 			}
 		}
     }
