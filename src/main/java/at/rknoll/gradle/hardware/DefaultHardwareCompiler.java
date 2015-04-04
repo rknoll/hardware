@@ -1,6 +1,5 @@
 package at.rknoll.gradle.hardware;
 
-import at.rknoll.gradle.hardware.modelsimaltera.ModelsimAlteraCompilerImpl;
 import org.gradle.api.Project;
 
 import java.io.File;
