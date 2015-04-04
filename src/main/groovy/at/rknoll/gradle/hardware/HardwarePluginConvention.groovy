@@ -1,5 +1,6 @@
 package at.rknoll.gradle.hardware
 
+import org.gradle.api.Project
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.internal.tasks.DefaultSourceSetContainer
 import org.gradle.api.tasks.SourceSetContainer
@@ -17,7 +18,7 @@ class HardwarePluginConvention {
     HardwarePluginConvention(ProjectInternal project, Instantiator instantiator) {
         this.project = project
         sourceSets = instantiator.newInstance(DefaultSourceSetContainer.class, project.fileResolver, project.tasks, instantiator)
-		hardwareCompilers = instantiator.newInstance(DefaultHardwareCompilerContainer.class, instantiator, project)
+        hardwareCompilers = instantiator.newInstance(DefaultHardwareCompilerContainer.class, instantiator, (Project)project)
 		hardwareSources = new DefaultDirectedGraph<File, DefaultEdge>(DefaultEdge.class);
         hardwareSourceInformation = new HashMap<>()
 	}
