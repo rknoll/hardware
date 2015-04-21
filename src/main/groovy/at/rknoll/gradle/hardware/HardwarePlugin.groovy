@@ -1,8 +1,8 @@
 package at.rknoll.gradle.hardware
 
-import at.rknoll.gradle.hardware.pshdl.PshdlPlugin
-import at.rknoll.gradle.hardware.verilog.VerilogPlugin
-import at.rknoll.gradle.hardware.vhdl.VhdlPlugin
+import at.rknoll.gradle.hardware.language.pshdl.PshdlPlugin
+import at.rknoll.gradle.hardware.language.verilog.VerilogPlugin
+import at.rknoll.gradle.hardware.language.vhdl.VhdlPlugin
 import org.gradle.api.*
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.bundling.*
@@ -15,7 +15,7 @@ import org.gradle.api.plugins.MavenPlugin
 /**
  * Created by rknoll on 20/07/14.
  */
-class HardwarePlugin implements Plugin<Project> {
+class HardwarePlugin implements Plugin<ProjectInternal> {
 	private final Instantiator instantiator;
 	public static final String PREPARE_TASK_NAME = "prepareHardwareCompile";
 	public static final String HARDWARE_COMPILE_TASK_NAME = "hardwareCompile";
@@ -28,10 +28,10 @@ class HardwarePlugin implements Plugin<Project> {
 		this.instantiator = instantiator;
 	}
 
-	public void apply(Project project) {
+	public void apply(ProjectInternal project) {
 		project.getPlugins().apply(BasePlugin.class);
 		project.getPlugins().apply(MavenPlugin.class);
-		HardwarePluginConvention hardwareConvention = new HardwarePluginConvention((ProjectInternal) project, instantiator);
+		HardwarePluginConvention hardwareConvention = new HardwarePluginConvention(project, instantiator);
         project.getConvention().getPlugins().put("hardware", hardwareConvention);
 
 		SourceSetContainer container = hardwareConvention.getSourceSets()
@@ -95,6 +95,7 @@ class HardwarePlugin implements Plugin<Project> {
 			runtime zipTask
 		}
 
+		// apply all supported language plugins
 		project.getPlugins().apply(VhdlPlugin.class);
 		project.getPlugins().apply(VerilogPlugin.class);
 		project.getPlugins().apply(PshdlPlugin.class);

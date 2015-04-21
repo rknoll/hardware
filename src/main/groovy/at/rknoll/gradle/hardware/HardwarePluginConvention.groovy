@@ -18,7 +18,7 @@ class HardwarePluginConvention {
     HardwarePluginConvention(ProjectInternal project, Instantiator instantiator) {
         this.project = project
         sourceSets = instantiator.newInstance(DefaultSourceSetContainer.class, project.fileResolver, project.tasks, instantiator)
-        hardwareCompilers = instantiator.newInstance(DefaultHardwareCompilerContainer.class, instantiator, (Project)project)
+        hardwareCompilers = instantiator.newInstance(DefaultHardwareCompilerContainer.class, instantiator)
 		hardwareSources = new DefaultDirectedGraph<File, DefaultEdge>(DefaultEdge.class);
         hardwareSourceInformation = new HashMap<>()
 	}

@@ -1,10 +1,16 @@
 package at.rknoll.gradle.hardware
 
 /**
- * Created by Richard on 30.03.2015.
+ * Util Class for all Hardware Plugins.
  */
 class HardwareUtils {
 
+    /**
+     * Gets the Library Name for a given group and entity name.
+     * @param group The Group.
+     * @param name The Entity Name.
+     * @return The Library Name.
+     */
     public static String getLibraryName(String group, String name) {
         return group.replace('.', '_').toLowerCase() + "_" + name.toLowerCase()
     }

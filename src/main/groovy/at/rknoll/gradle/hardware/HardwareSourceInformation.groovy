@@ -1,10 +1,21 @@
 package at.rknoll.gradle.hardware
 
 /**
- * Created by Richard on 30.03.2015.
+ * Information Class for Hardware Sources.
  */
 class HardwareSourceInformation {
+    /**
+     * The Group.
+     */
     String group
+
+    /**
+     * The Entity Name.
+     */
     String name
+
+    /**
+     * The Version.
+     */
     String version
 }

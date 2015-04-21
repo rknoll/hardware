@@ -1,26 +1,27 @@
 package at.rknoll.gradle.hardware;
 
-import org.gradle.api.Namer;
-import org.gradle.api.Project;
 import org.gradle.api.internal.AbstractNamedDomainObjectContainer;
-import org.gradle.api.internal.file.FileResolver;
-import org.gradle.api.tasks.SourceSet;
-import org.gradle.api.tasks.SourceSetContainer;
 import org.gradle.internal.reflect.Instantiator;
-import java.util.Set;
 
-public class DefaultHardwareCompilerContainer extends AbstractNamedDomainObjectContainer<DefaultHardwareCompiler> implements HardwareCompilerContainer {
+/**
+ * Default Implementation of a {@link HardwareCompiler}.
+ */
+public class DefaultHardwareCompilerContainer extends AbstractNamedDomainObjectContainer<HardwareCompiler> implements HardwareCompilerContainer {
 	private final Instantiator instantiator;
-	private final Project project;
 
-	public DefaultHardwareCompilerContainer(Instantiator classGenerator, Project project) {
-		super(DefaultHardwareCompiler.class, classGenerator, DefaultHardwareCompiler::getName);
+	/**
+	 * Creates a new Hardware Compiler Container that holds all Compilers in the Project.
+	 * @param classGenerator The generator to be used to create new Compilers.
+	 */
+	public DefaultHardwareCompilerContainer(final Instantiator classGenerator) {
+		super(HardwareCompiler.class, classGenerator, HardwareCompiler::getName);
 		this.instantiator = classGenerator;
-		this.project = project;
 	}
 
 	@Override
-	protected DefaultHardwareCompiler doCreate(String name) {
-		return instantiator.newInstance(DefaultHardwareCompiler.class, name, this);
+	protected HardwareCompiler doCreate(final String name) {
+		// calls the Constructor of HardwareCompiler and passes the given name and
+		// this (the Container of Compilers) to it.
+		return instantiator.newInstance(HardwareCompiler.class, name, this);
 	}
 }

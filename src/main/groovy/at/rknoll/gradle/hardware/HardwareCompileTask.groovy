@@ -1,6 +1,5 @@
 package at.rknoll.gradle.hardware
 
-import org.gradle.api.file.FileTree
 import org.gradle.api.tasks.SourceTask
 import org.gradle.api.tasks.TaskAction
 import org.jgrapht.alg.CycleDetector
@@ -35,7 +34,7 @@ class HardwareCompileTask extends SourceTask {
 			file = orderIterator.next();
 			println "compiling $file.name"
 
-			List<DefaultHardwareCompiler> allCompilers = new ArrayList<>((Set<DefaultHardwareCompiler>)project.hardwareCompilers);
+			List<HardwareCompiler> allCompilers = new ArrayList<>((Set<HardwareCompiler>)project.hardwareCompilers);
 			allCompilers = allCompilers.sort()
 
 			def usedCompiler = allCompilers.find { it.compile(file) }

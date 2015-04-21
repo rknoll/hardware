@@ -14,7 +14,11 @@ class HardwarePrepareCompileTask extends DefaultTask {
 			def moduleDirName = libsDirName + HardwareUtils.getLibraryName(art.moduleVersion.id.group, art.moduleVersion.id.name)
 			def moduleDir = new File(moduleDirName)
 			project.copy {
-				from { project.zipTree(art.file).matching{exclude{it.path.contains('compile')}} }
+				from {
+					project.zipTree(art.file).matching {
+						exclude { it.path.contains('compile') }
+					}
+				}
 				into moduleDir
 			}
 			def source = new HardwareSourceInformation()
