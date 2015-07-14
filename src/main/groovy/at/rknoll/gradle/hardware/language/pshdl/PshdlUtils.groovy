@@ -43,7 +43,7 @@ class PshdlUtils {
         }
 
         if (foundInstances.empty) {
-            throw new RuntimeException("Could not locate Pshdl Executable. Please define your local Installation Path.")
+            return null;
         } else if (foundInstances.size() > 1) {
             for (String instance : foundInstances) {
                 System.err.println(instance)

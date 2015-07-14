@@ -30,17 +30,26 @@ class PshdlConverter {
 		if (files.isEmpty()) return
 
 		def pshdlPath = PshdlUtils.findPshdlExecutable("pshdl.jar", project.pshdl as PshdlExtension)
+		def args = ["java"]
+
+		if (pshdlPath == null) {
+			// no pshdl jar available, use the bundled version
+			args += ["-cp", project.configurations.pshdl.asPath, "org.pshdl.commandline.PSHDLCompiler"]
+		} else {
+			args += ["-jar", pshdlPath]
+		}
 
 		files.each { entry ->
 			File destDir = new File(entry.key)
 			destDir.mkdirs()
 
-			def args = ["java", "-jar", pshdlPath, "vhdl", "-o", destDir.getAbsolutePath()]
-			entry.value.each { args.add(it) }
+			def line = args.clone()
+			line += ["vhdl", "-o", destDir.getAbsolutePath()]
+			entry.value.each { line.add(it) }
 
 			new ByteArrayOutputStream().withStream { os ->
 				ExecResult result = project.exec {
-					commandLine = args
+					commandLine = line
 					standardOutput = os
 					ignoreExitValue = true
 				}
@@ -53,7 +62,5 @@ class PshdlConverter {
 				}
 			}
 		}
-
-
 	}
 }

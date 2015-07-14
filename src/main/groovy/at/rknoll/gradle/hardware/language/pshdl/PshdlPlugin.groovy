@@ -60,6 +60,19 @@ class PshdlPlugin implements Plugin<Project> {
 				project.tasks.clean.dependsOn(cleanPrepareTaskName)
 			}
         });
-    }
+
+		project.afterEvaluate {
+			println "** PSHDL: " + project.pshdl.version
+			project.repositories {
+				maven { url project.pshdl.mavenUrl }
+			}
+			project.configurations {
+				pshdl
+			}
+			project.dependencies {
+				pshdl group: 'org.pshdl', name: 'commandline', version: project.pshdl.version
+			}
+		}
+	}
 
 }

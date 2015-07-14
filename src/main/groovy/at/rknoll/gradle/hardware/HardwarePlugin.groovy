@@ -88,7 +88,7 @@ class HardwarePlugin implements Plugin<ProjectInternal> {
 		Task zipTask = project.getTasks().create("sources", Zip.class);
 		zipTask.setDescription("Zips all sources of this project.");
 		zipTask.setGroup(DEPENDENCIES_GROUP_NAME);
-		zipTask.dependsOn(compile);
+		zipTask.dependsOn(PREPARE_TASK_NAME);
 		zipTask.from project.sourceSets.main.allSource
 
 		project.artifacts {
