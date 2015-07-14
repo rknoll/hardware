@@ -44,16 +44,20 @@ repositories {
 	jcenter()
 }
 
+ext.antlr = [
+        outputDirectory: 'src/generated/antlr/',
+        destPackage: 'at/rknoll/parser/vhdl'
+]
+
 generateGrammarSource {
-    def destPackage = 'at/rknoll/parser/vhdl'
-    outputDirectory = file('src/generated/antlr/' + destPackage)
+    outputDirectory = file(antlr.outputDirectory + antlr.destPackage)
 }
 
-compileJava.source generateGrammarSource.outputs.files
+compileJava.source file(antlr.outputDirectory)
 
 idea {
     module {
-        sourceDirs += generateGrammarSource.outputDirectory
+        sourceDirs += file(antlr.outputDirectory)
     }
 }
 

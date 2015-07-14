@@ -1,5 +1,14 @@
 package at.rknoll.gradle.hardware.language.vhdl
 
+import at.rknoll.parser.vhdl.VhdlLexer
+import at.rknoll.parser.vhdl.VhdlParser
+import org.antlr.runtime.ANTLRFileStream
+import org.antlr.runtime.ANTLRInputStream
+import org.antlr.runtime.ANTLRStringStream
+import org.antlr.runtime.CharStream
+import org.antlr.runtime.CommonTokenStream
+import org.antlr.runtime.TokenStream
+import org.antlr.runtime.tree.CommonTree
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
 
@@ -8,6 +17,26 @@ import java.util.regex.Pattern
 
 class VhdlFindDependenciesTask extends DefaultTask {
 
+
+    private void printTree(CommonTree ast) {
+        print(ast, 0);
+    }
+
+    private void print(CommonTree tree, int level) {
+        //indent level
+        for (int i = 0; i < level; i++)
+            System.out.print("--");
+
+        //print node description: type code followed by token text
+        System.out.println(" " + tree.getType() + " " + tree.getText());
+
+        //print all children
+        if (tree.getChildren() != null)
+            for (Object ie : tree.getChildren()) {
+                print((CommonTree) ie, level + 1);
+            }
+    }
+
     @TaskAction
     def compile() {
 		def dependsOn = [:]
@@ -15,6 +44,20 @@ class VhdlFindDependenciesTask extends DefaultTask {
 
 		for (File file : project.hardwareSources.vertexSet()) {
 			if (!VhdlUtils.isVhdlFile(file)) continue
+
+            // construct lexer and parsers
+            def stream = new ANTLRStringStream(file.text)
+            def lexer = new VhdlLexer(stream)
+            def tokenStream = new CommonTokenStream(lexer)
+            def parser = new VhdlParser(tokenStream)
+
+            // parse design file
+            def designFile = parser.design_file()
+
+            // get parse tree
+            def tree = (CommonTree)designFile.tree
+            printTree(tree)
+
 			String fileContents = file.text
 			dependsOn[file] = []
 			definesUnits[file] = []
