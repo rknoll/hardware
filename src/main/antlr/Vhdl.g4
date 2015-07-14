@@ -1,135 +1,168 @@
+//
+//  Copyright (C) 2010-2014  Denis Gavrish
+//
+//  This program is free software: you can redistribute it and/or modify
+//  it under the terms of the GNU General Public License as published by
+//  the Free Software Foundation, either version 3 of the License, or
+//  (at your option) any later version.
+//
+//  This program is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  GNU General Public License for more details.
+//
+//  You should have received a copy of the GNU General Public License
+//  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//
+
 grammar Vhdl;
 
-options {
-  k = 3;
-  language = Java;
-  output = AST;
-}
+ABS: A B S;
+ACCESS : A C C E S S;
+ACROSS : A C R O S S;
+AFTER : A F T E R;
+ALIAS : A L I A S;
+ALL : A L L;
+AND : A N D;
+ARCHITECTURE : A R C H I T E C T U R E;
+ARRAY : A R R A Y;
+ASSERT : A S S E R T;
+ATTRIBUTE : A T T R I B U T E;
+BEGIN : B E G I N;
+BLOCK : B L O C K;
+BODY : B O D Y;
+BREAK : B R E A K;
+BUFFER : B U F F E R;
+BUS : B U S;
+CASE : C A S E;
+COMPONENT : C O M P O N E N T;
+CONFIGURATION : C O N F I G U R A T I O N;
+CONSTANT : C O N S T A N T;
+DISCONNECT : D I S C O N N E C T;
+DOWNTO : D O W N T O;
+END : E N D;
+ENTITY : E N T I T Y;
+ELSE : E L S E;
+ELSIF : E L S I F;
+EXIT : E X I T;
+FILE : F I L E;
+FOR : F O R;
+FUNCTION : F U N C T I O N;
+GENERATE : G E N E R A T E;
+GENERIC : G E N E R I C;
+GROUP : G R O U P;
+GUARDED : G U A R D E D;
+IF : I F;
+IMPURE : I M P U R E;
+IN : I N;
+INERTIAL : I N E R T I A L;
+INOUT : I N O U T;
+IS : I S;
+LABEL : L A B E L;
+LIBRARY : L I B R A R Y;
+LIMIT : L I M I T;
+LINKAGE : L I N K A G E;
+LITERAL : L I T E R A L;
+LOOP : L O O P;
+MAP : M A P;
+MOD : M O D;
+NAND : N A N D;
+NATURE : N A T U R E;
+NEW : N E W;
+NEXT : N E X T;
+NOISE : N O I S E;
+NOR : N O R;
+NOT : N O T;
+NULL : N U L L;
+OF : O F;
+ON : O N;
+OPEN : O P E N;
+OR : O R;
+OTHERS : O T H E R S;
+OUT : O U T;
+PACKAGE : P A C K A G E;
+PORT : P O R T;
+POSTPONED : P O S T P O N E D;
+PROCESS : P R O C E S S;
+PROCEDURE : P R O C E D  U R E;
+PROCEDURAL : P R O C E D U R A L;
+PURE : P U R E;
+QUANTITY : Q U A N T I T Y;
+RANGE : R A N G E;
+REVERSE_RANGE : R E V E R S E '_' R A N G E;
+REJECT : R E J E C T;
+REM : R E M;
+RECORD : R E C O R D;
+REFERENCE : R E F E R E N C E;
+REGISTER : R E G I S T E R;
+REPORT : R E P O R T;
+RETURN : R E T U R N;
+ROL : R O L;
+ROR : R O R;
+SELECT : S E L E C T;
+SEVERITY : S E V E R I T Y;
+SHARED : S H A R E D;
+SIGNAL : S I G N A L;
+SLA : S L A;
+SLL : S L L;
+SPECTRUM : S P E C T R U M;
+SRA : S R A;
+SRL : S R L;
+SUBNATURE : S U B N A T U R E;
+SUBTYPE : S U B T Y P E;
+TERMINAL : T E R M I N A L;
+THEN : T H E N;
+THROUGH : T H R O U G H;
+TO : T O;
+TOLERANCE : T O L E R A N C E;
+TRANSPORT : T R A N S P O R T;
+TYPE : T Y P E;
+UNAFFECTED : U N A F F E C T E D;
+UNITS : U N I T S;
+UNTIL : U N T I L;
+USE : U S E;
+VARIABLE : V A R I A B L E;
+WAIT : W A I T;
+WITH : W I T H;
+WHEN : W H E N;
+WHILE : W H I L E;
+XNOR : X N O R;
+XOR : X O R;
 
-tokens {
-  ABS='abs';
-  ACCESS='access';
-  ACROSS='across';
-  AFTER='after';
-  ALIAS='alias';
-  ALL='all';
-  AND='and';
-  ARCHITECTURE='architecture';
-  ARRAY='array';
-  ASSERT='assert';
-  ATTRIBUTE='attribute';
-  BEGIN='begin';
-  BLOCK='block';
-  BODY='body';
-  BREAK='break';
-  BUFFER='buffer';
-  BUS='bus';
-  CASE='case';
-  COMPONENT='component';
-  CONFIGURATION='configuration';
-  CONSTANT='constant';
-  DISCONNECT='disconnect';
-  DOWNTO='downto';
-  END='end';
-  ENTITY='entity';
-  ELSE='else';
-  ELSIF='elsif';
-  EXIT='exit';
-  FILE='file';
-  FOR='for';
-  FUNCTION='function';
-  GENERATE='generate';
-  GENERIC='generic';
-  GROUP='group';
-  GUARDED='guarded';
-  IF='if';
-  IMPURE='impure';
-  IN='in';
-  INERTIAL='inertial';
-  INOUT='inout';
-  IS='is';
-  LABEL='label';
-  LIBRARY='library';
-  LIMIT='limit';
-  LINKAGE='linkage';
-  LITERAL='literal';
-  LOOP='loop';
-  MAP='map';
-  MOD='mod';
-  NAND='nand';
-  NATURE='nature';
-  NEW='new';
-  NEXT='next';
-  NOISE='noise';
-  NOR='nor';
-  NOT='not';
-  NULL='null';
-  OF='of';
-  ON='on';
-  OPEN='open';
-  OR='or';
-  OTHERS='others';
-  OUT='out';
-  PACKAGE='package';
-  PORT='port';
-  POSTPONED='postponed';
-  PROCESS='process';
-  PROCEDURE='procedure';
-  PROCEDURAL='procedural';
-  PURE='pure';
-  QUANTITY='quantity';
-  RANGE='range';
-  REJECT='reject';
-  REM='rem';
-  RECORD='record';
-  REFERENCE='reference';
-  REGISTER='register';
-  REPORT='report';
-  RETURN='return';
-  ROL='rol';
-  ROR='ror';
-  SELECT='select';
-  SEVERITY='severity';
-  SHARED='shared';
-  SIGNAL='signal';
-  SLA='sla';
-  SLL='sll';
-  SPECTRUM='spectrum';
-  SRA='sra';
-  SRL='srl';
-  SUBNATURE='subnature';
-  SUBTYPE='subtype';
-  TERMINAL='terminal';
-  THEN='then';
-  THROUGH='through';
-  TO='to';
-  TOLERANCE='tolerance';
-  TRANSPORT='transport';
-  TYPE='type';
-  UNAFFECTED='unaffected';
-  UNITS='units';
-  UNTIL='until';
-  USE='use';
-  VARIABLE='variable';
-  WAIT='wait';
-  WITH='with';
-  WHEN='when';
-  WHILE='while';
-  XNOR='xnor';
-  XOR='xor';
-}
+// case insensitive chars
+fragment A:('a'|'A');
+fragment B:('b'|'B');
+fragment C:('c'|'C');
+fragment D:('d'|'D');
+fragment E:('e'|'E');
+fragment F:('f'|'F');
+fragment G:('g'|'G');
+fragment H:('h'|'H');
+fragment I:('i'|'I');
+fragment J:('j'|'J');
+fragment K:('k'|'K');
+fragment L:('l'|'L');
+fragment M:('m'|'M');
+fragment N:('n'|'N');
+fragment O:('o'|'O');
+fragment P:('p'|'P');
+fragment Q:('q'|'Q');
+fragment R:('r'|'R');
+fragment S:('s'|'S');
+fragment T:('t'|'T');
+fragment U:('u'|'U');
+fragment V:('v'|'V');
+fragment W:('w'|'W');
+fragment X:('x'|'X');
+fragment Y:('y'|'Y');
+fragment Z:('z'|'Z');
 
-@lexer::header {
-package at.rknoll.parser.vhdl;
-}
- 
-@parser::header {
-package at.rknoll.parser.vhdl;
-}
 
 //------------------------------------------Parser----------------------------------------
+
 abstract_literal
-   :  DECIMAL_LITERAL
+   :  INTEGER_LITERAL
+   |  REAL_LITERAL
    |  BASE_LITERAL
    ;
 
@@ -151,7 +184,7 @@ actual_parameter_part
   ;
 
 actual_part
-  : (name LPAREN)=> name LPAREN actual_designator RPAREN
+  : name LPAREN actual_designator RPAREN
   | actual_designator
   ;
 
@@ -177,16 +210,16 @@ alias_designator
   ;
 
 alias_indication
-  : (subnature_indication)=> subnature_indication
+  : subnature_indication
   | subtype_indication
   ;
 
 allocator
-  : NEW ( (name CHARACTER_LITERAL)=> qualified_expression | subtype_indication )
+  : NEW ( qualified_expression | subtype_indication )
   ;
 
 architecture_body
-  : ARCHITECTURE identifier OF name IS
+  : ARCHITECTURE identifier OF identifier IS
     architecture_declarative_part
     BEGIN
     architecture_statement_part
@@ -199,21 +232,13 @@ architecture_declarative_part
 
 architecture_statement
   : block_statement
-  | (( label_colon )? ( POSTPONED )? PROCESS)=>
-    process_statement
-  | (( label_colon )? ( POSTPONED )? procedure_call SEMI)=>
-    concurrent_procedure_call_statement
-  | (( label_colon )? ( POSTPONED )? ASSERT)=>
-    concurrent_assertion_statement
-  | (( label_colon )? ( POSTPONED )?
-      ( conditional_signal_assignment | selected_signal_assignment ))=>
-    concurrent_signal_assignment_statement
-  | (label_colon instantiated_unit)=>
-    component_instantiation_statement
-  | (label_colon generation_scheme GENERATE)=>
-    generate_statement
-  | (( label_colon )? BREAK ( break_list )? ( sensitivity_clause )?)=>
-    concurrent_break_statement
+  | process_statement
+  | ( label_colon )? concurrent_procedure_call_statement
+  | ( label_colon )? concurrent_assertion_statement
+  | ( label_colon )? ( POSTPONED )? concurrent_signal_assignment_statement
+  | component_instantiation_statement
+  | generate_statement
+  | concurrent_break_statement
   | simultaneous_statement
   ;
 
@@ -222,12 +247,12 @@ architecture_statement_part
   ;
 
 array_nature_definition
-  : (ARRAY LPAREN index_subtype_definition)=> unconstrained_nature_definition
+  : unconstrained_nature_definition
   | constrained_nature_definition
   ;
 
 array_type_definition
-  : (unconstrained_array_definition)=> unconstrained_array_definition
+  : unconstrained_array_definition
   | constrained_array_definition
   ;
 
@@ -240,7 +265,7 @@ assertion_statement
   ;
 
 association_element
-  : ( (formal_part ARROW)=> formal_part ARROW )? actual_part
+  : ( formal_part ARROW )? actual_part
   ;
 
 association_list
@@ -257,6 +282,7 @@ attribute_declaration
 attribute_designator
   : identifier
   | RANGE
+  | REVERSE_RANGE
   | ACROSS
   | THROUGH
   | REFERENCE
@@ -283,7 +309,7 @@ block_configuration
   ;
 
 block_declarative_item
-  : (subprogram_declaration)=> subprogram_declaration
+  : subprogram_declaration
   | subprogram_body
   | type_declaration
   | subtype_declaration
@@ -317,7 +343,7 @@ block_header
   ;
 
 block_specification
-  : (identifier)=> identifier ( LPAREN index_specification RPAREN )?
+  : identifier ( LPAREN index_specification RPAREN )?
   | name
   ;
 
@@ -334,7 +360,7 @@ block_statement_part
   ;
 
 branch_quantity_declaration
-  : QUANTITY ( (across_aspect)=> across_aspect )?
+  : QUANTITY ( across_aspect )?
     ( through_aspect )? terminal_aspect SEMI
   ;
 
@@ -365,8 +391,8 @@ case_statement_alternative
   ;
 
 choice
-  : (identifier)=> identifier
-  | (discrete_range)=> discrete_range
+  : identifier
+  | discrete_range
   | simple_expression
   | OTHERS
   ;
@@ -440,12 +466,7 @@ conditional_signal_assignment
   ;
 
 conditional_waveforms
-  : waveform ( (WHEN condition ELSE)=> conditional_waveforms_bi )?
-    ( WHEN condition )?
-  ;
-conditional_waveforms_bi
-  : WHEN condition ELSE waveform
-    ( (WHEN condition ELSE)=> conditional_waveforms_bi )?
+  : waveform ( WHEN condition (ELSE conditional_waveforms)?)?
   ;
 
 configuration_declaration
@@ -529,12 +550,12 @@ disconnection_specification
   ;
 
 discrete_range
-  : (range)=> range
+  : range
   | subtype_indication
   ;
 
 element_association
-  : ( (choices ARROW)=> choices ARROW )? expression
+  : (  choices ARROW )? expression
   ;
 
 element_declaration
@@ -595,7 +616,7 @@ entity_declaration
   ;
 
 entity_declarative_item
-  : (subprogram_declaration)=> subprogram_declaration
+  : subprogram_declaration
   | subprogram_body
   | type_declaration
   | subtype_declaration
@@ -641,8 +662,8 @@ entity_specification
   ;
 
 entity_statement
-  : (( label_colon )? ( POSTPONED )? ASSERT)=> concurrent_assertion_statement
-  | (( label_colon )? ( POSTPONED )? PROCESS)=> process_statement
+  :  concurrent_assertion_statement
+  |  process_statement
   | concurrent_procedure_call_statement
   ;
 
@@ -695,7 +716,7 @@ file_open_information
   ;
 
 file_type_definition
-  : FILE OF name
+  : FILE OF subtype_indication
   ;
 
 formal_parameter_list
@@ -703,16 +724,13 @@ formal_parameter_list
   ;
 
 formal_part
-  : name ( LPAREN  name RPAREN )?
+  : identifier
+   | identifier LPAREN explicit_range  RPAREN 
   ;
 
 free_quantity_declaration
   : QUANTITY identifier_list COLON subtype_indication
     ( VARASGN expression )? SEMI
-  ;
-
-function_call
-  : name ( LPAREN actual_parameter_part RPAREN )?
   ;
 
 generate_statement
@@ -733,7 +751,7 @@ generic_clause
   ;
 
 generic_list
-  : interface_list
+  : interface_constant_declaration (SEMI interface_constant_declaration)*
   ;
 
 generic_map_aspect
@@ -784,7 +802,7 @@ index_constraint
   ;
 
 index_specification
-  : (discrete_range)=> discrete_range
+  : discrete_range
   | expression
   ;
 
@@ -810,8 +828,8 @@ interface_constant_declaration
   ;
 
 interface_declaration
-  : (interface_constant_declaration)=> interface_constant_declaration
-  | (interface_signal_declaration)=> interface_signal_declaration
+  :  interface_constant_declaration
+  |  interface_signal_declaration
   | interface_variable_declaration
   | interface_file_declaration
   | interface_terminal_declaration
@@ -826,6 +844,14 @@ interface_file_declaration
   : FILE identifier_list COLON subtype_indication
   ;
 
+interface_signal_list 
+  : interface_signal_declaration ( SEMI interface_signal_declaration )*
+  ;
+
+interface_port_list 
+  : interface_port_declaration ( SEMI interface_port_declaration )*
+  ;
+
 interface_list
   : interface_element ( SEMI interface_element )*
   ;
@@ -835,8 +861,13 @@ interface_quantity_declaration
     ( VARASGN expression )?
   ;
 
+interface_port_declaration
+  : identifier_list COLON signal_mode subtype_indication
+    ( BUS )?
+  ;
+
 interface_signal_declaration
-  : ( SIGNAL )? identifier_list COLON ( mode )? subtype_indication
+  : SIGNAL identifier_list COLON subtype_indication
     ( BUS )? ( VARASGN expression )?
   ;
 
@@ -846,7 +877,7 @@ interface_terminal_declaration
 
 interface_variable_declaration
   : ( VARIABLE )? identifier_list COLON
-    ( mode )? subtype_indication ( VARASGN expression )?
+    ( signal_mode )? subtype_indication ( VARASGN expression )?
   ;
 
 iteration_scheme
@@ -863,15 +894,14 @@ library_clause
   ;
 
 library_unit
-  : ( ARCHITECTURE | PACKAGE BODY )=> secondary_unit
-  | primary_unit
+  : secondary_unit  | primary_unit
   ;
 
 literal
   : NULL
   | BIT_STRING_LITERAL
-  | (DBLQUOTE)=> STRING_LITERAL
-  | (enumeration_literal)=> enumeration_literal
+  | STRING_LITERAL
+  | enumeration_literal
   | numeric_literal
   ;
 
@@ -899,7 +929,7 @@ loop_statement
     END LOOP ( identifier )? SEMI
   ;
 
-mode
+signal_mode
   : IN
   | OUT
   | INOUT
@@ -928,20 +958,30 @@ multiplying_operator
 // slice_name, and attribute_name, respectively)
 // (2.2.2004, e.f.)
 name
-  : ( identifier | STRING_LITERAL )
-    ( options{greedy=true;}:
-      (
-          DOT suffix
-        | CHARACTER_LITERAL aggregate
-        | ( signature )? CHARACTER_LITERAL attribute_designator
-        | (LPAREN expression ( COMMA expression )* RPAREN)=>
-            LPAREN expression ( COMMA expression )* RPAREN
-        | (LPAREN actual_parameter_part RPAREN)=>
-            LPAREN actual_parameter_part RPAREN
-        | LPAREN discrete_range ( COMMA discrete_range )* RPAREN
-      )
-    )*
+  : selected_name  
+  | name_part ( DOT name_part)*
   ;
+
+name_part
+   : selected_name (name_attribute_part | name_function_call_or_indexed_part | name_slice_part)?
+   ;
+   
+name_attribute_part
+   : APOSTROPHE attribute_designator ( expression ( COMMA expression )* )?
+   ;
+
+name_function_call_or_indexed_part
+   : LPAREN actual_parameter_part? RPAREN
+   ;
+
+name_slice_part
+   : LPAREN explicit_range ( COMMA explicit_range )* RPAREN
+   ;
+
+selected_name
+   : identifier (DOT suffix)*
+   ;
+
 
 nature_declaration
   : NATURE identifier IS nature_definition SEMI
@@ -961,7 +1001,7 @@ next_statement
   ;
 
 numeric_literal
-  : (abstract_literal)=> abstract_literal
+  : abstract_literal
   | physical_literal
   ;
 
@@ -985,7 +1025,7 @@ package_body
   ;
 
 package_body_declarative_item
-  : (subprogram_declaration)=> subprogram_declaration
+  : subprogram_declaration
   | subprogram_body
   | type_declaration
   | subtype_declaration
@@ -1038,7 +1078,7 @@ parameter_specification
   ;
 
 physical_literal
-  : ( abstract_literal )? name
+  : abstract_literal (options{greedy=true;}: identifier)
   ;
 
 physical_type_definition
@@ -1052,7 +1092,7 @@ port_clause
   ;
 
 port_list
-  : interface_list
+  : interface_port_list
   ;
 
 port_map_aspect
@@ -1060,12 +1100,12 @@ port_map_aspect
   ;
 
 primary
-  : (function_call)=> function_call
-  | (name CHARACTER_LITERAL)=> qualified_expression
-  | (LPAREN expression RPAREN)=> LPAREN expression RPAREN
-  | literal
+  : literal
+  | qualified_expression
+  | LPAREN expression RPAREN
   | allocator
   | aggregate
+  | name
   ;
 
 primary_unit
@@ -1075,7 +1115,7 @@ primary_unit
   ;
 
 procedural_declarative_item
-  : (subprogram_declaration)=> subprogram_declaration
+  : subprogram_declaration
   | subprogram_body
   | type_declaration
   | subtype_declaration
@@ -1098,7 +1138,7 @@ procedural_statement_part
   ;
 
 procedure_call
-  : name ( LPAREN actual_parameter_part RPAREN )?
+  : selected_name ( LPAREN actual_parameter_part RPAREN )?
   ;
 
 procedure_call_statement
@@ -1106,7 +1146,7 @@ procedure_call_statement
   ;
 
 process_declarative_item
-  : (subprogram_declaration)=> subprogram_declaration
+  : subprogram_declaration
   | subprogram_body
   | type_declaration
   | subtype_declaration
@@ -1139,12 +1179,12 @@ process_statement_part
   ;
 
 qualified_expression
-  : name CHARACTER_LITERAL ( (aggregate)=> aggregate | LPAREN expression RPAREN )
+  : subtype_indication APOSTROPHE  ( aggregate | LPAREN expression RPAREN )
   ;
 
 quantity_declaration
-  : (free_quantity_declaration)=> free_quantity_declaration
-  | (branch_quantity_declaration)=> branch_quantity_declaration
+  : free_quantity_declaration
+  | branch_quantity_declaration
   | source_quantity_declaration
   ;
 
@@ -1159,9 +1199,12 @@ quantity_specification
   ;
 
 range
-  : (simple_expression direction simple_expression)=>
-    simple_expression direction simple_expression
+  : explicit_range
   | name
+  ;
+
+explicit_range
+  : simple_expression direction simple_expression
   ;
 
 range_constraint
@@ -1205,7 +1248,7 @@ scalar_nature_definition
   ;
 
 scalar_type_definition
-  : (range_constraint UNITS)=> physical_type_definition
+  : physical_type_definition
   | enumeration_type_definition
   | range_constraint
   ;
@@ -1240,19 +1283,19 @@ sequence_of_statements
   ;
 
 sequential_statement
-  : (( label_colon )? WAIT)=> wait_statement
-  | (( label_colon )? ASSERT)=> assertion_statement
-  | (( label_colon )? REPORT)=> report_statement
-  | (( label_colon )? target LE)=> signal_assignment_statement
-  | (( label_colon )? target VARASGN)=> variable_assignment_statement
-  | (( label_colon )? IF)=> if_statement
-  | (( label_colon )? CASE)=> case_statement
-  | (( label_colon )? ( iteration_scheme )? LOOP)=> loop_statement
-  | (( label_colon )? NEXT)=> next_statement
-  | (( label_colon )? EXIT)=> exit_statement
-  | (( label_colon )? RETURN)=> return_statement
-  | (( label_colon )? NULL SEMI)=> ( label_colon )? NULL SEMI
-  | (( label_colon )? BREAK)=> break_statement
+  : wait_statement
+  | assertion_statement
+  | report_statement
+  | signal_assignment_statement
+  | variable_assignment_statement
+  | if_statement
+  | case_statement
+  | loop_statement
+  | next_statement
+  | exit_statement
+  | return_statement
+  | ( label_colon )? NULL SEMI
+  | break_statement
   | procedure_call_statement
   ;
 
@@ -1333,10 +1376,10 @@ simultaneous_procedural_statement
   ;
 
 simultaneous_statement
-  : (( label_colon )? simple_expression ASSIGN)=> simple_simultaneous_statement
-  | (( label_colon )? IF condition USE)=> simultaneous_if_statement
-  | (( label_colon )? CASE expression USE)=> simultaneous_case_statement
-  | (( label_colon )? PROCEDURAL ( IS )?)=> simultaneous_procedural_statement
+  : simple_simultaneous_statement
+  | simultaneous_if_statement
+  | simultaneous_case_statement
+  | simultaneous_procedural_statement
   | ( label_colon )? NULL SEMI
   ;
 
@@ -1379,7 +1422,7 @@ subprogram_declaration
   ;
 
 subprogram_declarative_item
-  : (subprogram_declaration)=> subprogram_declaration
+  : subprogram_declaration
   | subprogram_body
   | type_declaration
   | subtype_declaration
@@ -1404,9 +1447,17 @@ subprogram_kind
   ;
 
 subprogram_specification
+  : procedure_specification
+  | function_specification
+  ;
+
+procedure_specification
   : PROCEDURE designator ( LPAREN formal_parameter_list RPAREN )?
-  | ( PURE | IMPURE )? FUNCTION designator
-    ( LPAREN formal_parameter_list RPAREN )? RETURN name
+  ;
+
+function_specification
+  : ( PURE | IMPURE )? FUNCTION designator
+    ( LPAREN formal_parameter_list RPAREN )? RETURN subtype_indication
   ;
 
 subprogram_statement_part
@@ -1421,7 +1472,7 @@ subtype_declaration
 // is made optional to prevent antlr nondeterminism.
 // (9.2.2004, e.f.)
 subtype_indication
-  : name ( name )? ( constraint )? ( (TOLERANCE)=> tolerance_aspect )?
+  : selected_name ( selected_name )? ( constraint )? ( tolerance_aspect )?
   ;
 
 suffix
@@ -1482,7 +1533,7 @@ unconstrained_nature_definition
   ;
 
 use_clause
-  : USE name ( COMMA name )* SEMI
+  : USE selected_name ( COMMA selected_name )* SEMI
   ;
 
 variable_assignment_statement
@@ -1510,23 +1561,41 @@ waveform_element
 
 //------------------------------------------Lexer-----------------------------------------
 BASE_LITERAL
-   :  ( '#' EXTENDED_DIGIT ( '.' EXTENDED_DIGIT )? '#' ( EXPONENT )? )
+// INTEGER must be checked to be between and including 2 and 16 (included) i.e.
+// INTEGER >=2 and INTEGER <=16
+// A Based integer (a number without a . such as 3) should not have a negative exponent
+// A Based fractional number with a . i.e. 3.0 may have a negative exponent
+// These should be checked in the Visitor/Listener whereby an appropriate error message
+// should be given
+   :  INTEGER '#' BASED_INTEGER ('.'BASED_INTEGER)? '#' (EXPONENT)?
    ;
-   
+
 BIT_STRING_LITERAL
-  : ( 'b' | 'o' | 'x' ) '\"' EXTENDED_DIGIT '\"'
+  : BIT_STRING_LITERAL_BINARY
+  | BIT_STRING_LITERAL_OCTAL
+  | BIT_STRING_LITERAL_HEX
   ;
 
-DECIMAL_LITERAL
-   :  INTEGER ( ( '.' INTEGER )? ( EXPONENT )? )
-   ;
+BIT_STRING_LITERAL_BINARY
+    :   ('b'|'B') '\"' ('1' | '0' | '_')+ '\"'
+    ;
 
-EXTENDED_DIGIT
-   : INTEGER | LETTER
-   ;
-   
+BIT_STRING_LITERAL_OCTAL
+    :   ('o'|'O') '\"' ('7' |'6' |'5' |'4' |'3' |'2' |'1' | '0' | '_')+ '\"'
+    ;
+
+BIT_STRING_LITERAL_HEX
+    :   ('x'|'X') '\"' ( 'f' |'e' |'d' |'c' |'b' |'a' | 'F' |'E' |'D' |'C' |'B' |'A' | '9' | '8' | '7' |'6' |'5' |'4' |'3' |'2' |'1' | '0' | '_')+ '\"'
+    ;
+
+INTEGER_LITERAL
+   :    INTEGER  ( EXPONENT )?;
+
+REAL_LITERAL
+   :    INTEGER '.' INTEGER  ( EXPONENT )?;
+
 BASIC_IDENTIFIER
-   :   LETTER ( '_' | LETTER | DIGIT )*
+   :   LETTER ( '_' ( LETTER | DIGIT ) | LETTER | DIGIT )*
    ;
    
 EXTENDED_IDENTIFIER
@@ -1536,66 +1605,53 @@ EXTENDED_IDENTIFIER
     | '#' | '[' | ']' | '_' )+ '\\'
   ;
 
-fragment
-BASE
-  : INTEGER
-  ;
-
-fragment
-BASE_SPECIFIER
-  :  'B' | 'O' | 'X'
-  ;
-
-fragment
-LETTER  
+LETTER	
   :  'a'..'z' | 'A'..'Z'
   ;
 
 COMMENT
-  : '--' ( ~'\n' )* {$channel=HIDDEN;}
+  : '--' ( ~'\n' )* 
+  -> skip
   ;
 
 TAB
-  : ( '\t' )+ {$channel=HIDDEN;}
+  : ( '\t' )+ -> skip 
   ;
 
 SPACE
-  : ( ' ' )+ {$channel=HIDDEN;}
+  : ( ' ' )+ -> skip 
   ;
 
 NEWLINE
-  : '\n' {$channel=HIDDEN;}
+  : '\n' -> skip 
   ;
 
 CR
-  : '\r' {$channel=HIDDEN;}
+  : '\r' -> skip 
   ;
   
 CHARACTER_LITERAL
-   : '\'' .* '\''
-   {$type = CHARACTER_LITERAL;}
+   : APOSTROPHE . APOSTROPHE
    ;
 
 STRING_LITERAL
-  : '\"' .* '\"'
-  {$type = STRING_LITERAL;}
+  : '"' (~('"'|'\n'|'\r') | '""')* '"'
   ;
 
-fragment
 OTHER_SPECIAL_CHARACTER
   : '!' | '$' | '%' | '@' | '?' | '^' | '`' | '{' | '}' | '~'
-  | ' ' | '¡' | '¢' | '£' | '¤' | '¥' | '¦' | '§'
-  | '¨' | '©' | 'ª' | '«' | '¬' | '­' | '®' | '¯'
-  | '°' | '±' | '²' | '³' | '´' | 'µ' | '¶' | '·'
-  | '¸' | '¹' | 'º' | '»' | '¼' | '½' | '¾' | '¿'
-  | 'À' | 'Á' | 'Â' | 'Ã' | 'Ä' | 'Å' | 'Æ' | 'Ç'
-  | 'È' | 'É' | 'Ê' | 'Ë' | 'Ì' | 'Í' | 'Î' | 'Ï'
-  | 'Ð' | 'Ñ' | 'Ò' | 'Ó' | 'Ô' | 'Õ' | 'Ö' | '×'
-  | 'Ø' | 'Ù' | 'Ú' | 'Û' | 'Ü' | 'Ý' | 'Þ' | 'ß'
-  | 'à' | 'á' | 'â' | 'ã' | 'ä' | 'å' | 'æ' | 'ç'
-  | 'è' | 'é' | 'ê' | 'ë' | 'ì' | 'í' | 'î' | 'ï'
-  | 'ð' | 'ñ' | 'ò' | 'ó' | 'ô' | 'õ' | 'ö' | '÷'
-  | 'ø' | 'ù' | 'ú' | 'û' | 'ü' | 'ý' | 'þ' | 'ÿ'
+  | ' ' | 'Ў' | 'ў' | 'Ј' | '¤' | 'Ґ' | '¦' | '§'
+  | 'Ё' | '©' | 'Є' | '«' | '¬' | '­' | '®' | 'Ї'
+  | '°' | '±' | 'І' | 'і' | 'ґ' | 'µ' | '¶' | '·'
+  | 'ё' | '№' | 'є' | '»' | 'ј' | 'Ѕ' | 'ѕ' | 'ї'
+  | 'А' | 'Б' | 'В' | 'Г' | 'Д' | 'Е' | 'Ж' | 'З'
+  | 'И' | 'Й' | 'К' | 'Л' | 'М' | 'Н' | 'О' | 'П'
+  | 'Р' | 'С' | 'Т' | 'У' | 'Ф' | 'Х' | 'Ц' | 'Ч'
+  | 'Ш' | 'Щ' | 'Ъ' | 'Ы' | 'Ь' | 'Э' | 'Ю' | 'Я'
+  | 'а' | 'б' | 'в' | 'г' | 'д' | 'е' | 'ж' | 'з'
+  | 'и' | 'й' | 'к' | 'л' | 'м' | 'н' | 'о' | 'п'
+  | 'р' | 'с' | 'т' | 'у' | 'ф' | 'х' | 'ц' | 'ч'
+  | 'ш' | 'щ' | 'ъ' | 'ы' | 'ь' | 'э' | 'ю' | 'я'
   ;
 
 
@@ -1627,22 +1683,33 @@ BAR           : '|'   ;
 DOT           : '.'   ;
 BACKSLASH     : '\\'  ;
   
-fragment
+
 EXPONENT
-  :  'e' ( '+' | '-' )? INTEGER
+  :  ('E'|'e') ( '+' | '-' )? INTEGER
   ;
 
-fragment
-HEXDIGIT
-    : ('A'..'F'|'a'..'f')
-    ;  
 
-fragment
+HEXDIGIT
+    :	('A'..'F'|'a'..'f')
+    ;
+
+
 INTEGER
   :  DIGIT ( '_' | DIGIT )*
   ;
 
-fragment
- DIGIT
+DIGIT
   :  '0'..'9'
+  ;
+
+BASED_INTEGER
+  : EXTENDED_DIGIT ('_' | EXTENDED_DIGIT)*
+  ;
+
+EXTENDED_DIGIT
+  : (DIGIT | LETTER)
+  ;
+
+APOSTROPHE
+  : '\''
   ;
