@@ -78,7 +78,6 @@ class VhdlFindDependenciesTask extends DefaultTask {
                 @Override
                 void enterInstantiated_unit(VhdlParser.Instantiated_unitContext ctx) {
                     depends(ctx.name().selected_name().suffix(0).identifier().text)
-                    return visitChildren(ctx);
                 }
             }
 
