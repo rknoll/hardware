@@ -10,9 +10,9 @@ public class DefaultVerilogSourceSet implements VerilogSourceSet {
 
     public DefaultVerilogSourceSet(String displayName, FileResolver fileResolver) {
         verilog = new DefaultSourceDirectorySet(String.format("%s Verilog source", displayName), fileResolver)
-		VerilogSourceSet.EXTENSIONS.each {
-			verilog.getFilter().include("**/*" + it)
-		}
+        EXTENSIONS.each {
+            verilog.getFilter().include("**/*" + it)
+        }
     }
 
     public SourceDirectorySet getVerilog() {

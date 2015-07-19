@@ -1,7 +1,7 @@
 package at.rknoll.gradle.hardware.compiler.quartus.tasks
 
-import at.rknoll.utils.FileUtils
 import at.rknoll.gradle.hardware.compiler.quartus.QuartusPlugin
+import at.rknoll.utils.FileUtils
 import org.jgrapht.graph.DefaultEdge
 import org.jgrapht.traverse.TopologicalOrderIterator
 

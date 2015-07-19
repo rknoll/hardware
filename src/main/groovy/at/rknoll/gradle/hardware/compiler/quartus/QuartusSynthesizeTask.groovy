@@ -14,9 +14,9 @@ class QuartusSynthesizeTask extends DefaultTask {
         setGroup(BasePlugin.BUILD_GROUP);
     }
 
-	@TaskAction
-	def synthesize() {
+    @TaskAction
+    def synthesize() {
         logger = LoggerFactory.getLogger('quartus-logger')
-	}
+    }
 
 }

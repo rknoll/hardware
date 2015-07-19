@@ -16,8 +16,8 @@ public class FileUtils {
      * If one of the provided resources does not exist, it is assumed to be a file unless it ends with '/' or
      * '\'.
      *
-     * @param targetPath targetPath is calculated to this file
-     * @param basePath basePath is calculated from this file
+     * @param targetPath    targetPath is calculated to this file
+     * @param basePath      basePath is calculated from this file
      * @param pathSeparator directory separator. The platform default is not assumed so that we can test Unix behaviour when running on Windows (for example)
      * @return The relative path to targetPath from basePath.
      */

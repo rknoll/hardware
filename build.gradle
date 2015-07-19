@@ -51,7 +51,7 @@ ext.antlr = [
 
 generateGrammarSource {
     outputDirectory = file(antlr.outputDirectory + antlr.destPackage.replaceAll('\\.', '/'))
-    arguments += ["-visitor", "-package", antlr.destPackage]
+    arguments += ["-package", antlr.destPackage]
 }
 
 compileJava.source file(antlr.outputDirectory)

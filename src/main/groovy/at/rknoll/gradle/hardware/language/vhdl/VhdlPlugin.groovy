@@ -17,14 +17,14 @@ import javax.inject.Inject
  * Created by rknoll on 20/07/14.
  */
 class VhdlPlugin implements Plugin<Project> {
-	private final FileResolver fileResolver
+    private final FileResolver fileResolver
 
-	@Inject
-	public VhdlPlugin(FileResolver fileResolver) {
-		this.fileResolver = fileResolver
-	}
+    @Inject
+    public VhdlPlugin(FileResolver fileResolver) {
+        this.fileResolver = fileResolver
+    }
 
-	public void apply(Project project) {
+    public void apply(Project project) {
         HardwarePluginConvention hardwareConvention = project.getConvention().getPlugin(HardwarePluginConvention.class)
         SourceSetContainer container = hardwareConvention.getSourceSets()
 
@@ -34,22 +34,22 @@ class VhdlPlugin implements Plugin<Project> {
                 new DslObject(sourceSet).getConvention().getPlugins().put("vhdl", vhdlSourceSet);
 
                 vhdlSourceSet.getVhdl().srcDir(String.format("src/%s/vhdl", sourceSet.getName()));
-				sourceSet.getAllSource().source(vhdlSourceSet.getVhdl());
+                sourceSet.getAllSource().source(vhdlSourceSet.getVhdl());
 
                 String prepareTaskName = "prepare" + sourceSet.getName().toLowerCase().capitalize() + "VhdlCompile";
                 VhdlPrepareCompileTask prepare = project.getTasks().create(prepareTaskName, VhdlPrepareCompileTask.class);
                 prepare.setDescription(String.format("Prepares to Compile the %s Vhdl source.", sourceSet.getName()));
                 prepare.setSource(vhdlSourceSet.getVhdl());
-				prepare.setGroup(HardwarePlugin.PREPARE_GROUP_NAME);
+                prepare.setGroup(HardwarePlugin.PREPARE_GROUP_NAME);
                 project.getTasks().getByName(HardwarePlugin.PREPARE_TASK_NAME).dependsOn(prepareTaskName);
 
                 String dependenciesTaskName = "find" + sourceSet.getName().toLowerCase().capitalize() + "VhdlDependencies";
                 VhdlFindDependenciesTask dependencies = project.getTasks().create(dependenciesTaskName, VhdlFindDependenciesTask.class);
                 dependencies.setDescription(String.format("Finds dependencies of the %s Vhdl source.", sourceSet.getName()));
-				dependencies.setGroup(HardwarePlugin.DEPENDENCIES_GROUP_NAME);
+                dependencies.setGroup(HardwarePlugin.DEPENDENCIES_GROUP_NAME);
                 project.getTasks().getByName(HardwarePlugin.HARDWARE_COMPILE_TASK_NAME).dependsOn(dependenciesTaskName);
                 dependencies.dependsOn(HardwarePlugin.PREPARE_TASK_NAME);
-			}
+            }
         });
     }
 

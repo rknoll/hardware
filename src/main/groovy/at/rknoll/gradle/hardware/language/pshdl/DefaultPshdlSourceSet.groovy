@@ -10,9 +10,9 @@ public class DefaultPshdlSourceSet implements PshdlSourceSet {
 
     public DefaultPshdlSourceSet(String displayName, FileResolver fileResolver) {
         pshdl = new DefaultSourceDirectorySet(String.format("%s Pshdl source", displayName), fileResolver)
-		EXTENSIONS.each {
+        EXTENSIONS.each {
             pshdl.getFilter().include("**/*" + it)
-		}
+        }
     }
 
     public SourceDirectorySet getPshdl() {

@@ -3,7 +3,7 @@ package at.rknoll.gradle.hardware.compiler.quartus
 class QuartusUtils {
 
     private static final Set<String> QUARTUS_DIRS = new HashSet<String>(Arrays.asList(
-        [ "altera", "quartus", "bin", "bin64" ] as String []
+            ["altera", "quartus", "bin", "bin64"] as String[]
     ));
 
     private static boolean matches(String filename, String executable) {
@@ -18,11 +18,11 @@ class QuartusUtils {
         ArrayList<String> subDirectories = new ArrayList<String>(options.paths)
         ArrayList<String> foundInstances = new ArrayList<String>()
 
-        if (options.path) subDirectories = Arrays.asList([ options.path ] as String [])
+        if (options.path) subDirectories = Arrays.asList([options.path] as String[])
 
         int baseCount = subDirectories.size()
 
-        for(int i = 0; i < subDirectories.size(); i++) {
+        for (int i = 0; i < subDirectories.size(); i++) {
             File baseFile = new File(subDirectories.get(i))
             if (!baseFile.isDirectory() && matches(baseFile.getName(), executable)) foundInstances.add(baseFile.getAbsolutePath())
 

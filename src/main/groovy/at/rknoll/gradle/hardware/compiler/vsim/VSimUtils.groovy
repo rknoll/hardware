@@ -1,28 +1,17 @@
-package at.rknoll.gradle.hardware.language.pshdl
+package at.rknoll.gradle.hardware.compiler.vsim
 
-class PshdlUtils {
-
-    private static final Set<String> PSHDL_DIRS = new HashSet<String>(Arrays.asList(
-            ["pshdl"] as String[]
-    ));
-
-    public static boolean isPshdlFile(File file) {
-        String fileName = file.getAbsolutePath()
-        return PshdlSourceSet.EXTENSIONS.find {
-            return fileName.endsWith(it)
-        } != null
-    }
+class VSimUtils {
 
     private static boolean matches(String filename, String executable) {
         if (executable.lastIndexOf('.') <= 0) {
             int pos = filename.lastIndexOf('.');
-            if (pos > 0 && filename.substring(pos) != ".jar") return false
+            if (pos > 0 && filename.substring(pos) != ".exe") return false
             filename = pos > 0 ? filename.substring(0, pos) : filename;
         }
         return executable.equals(filename)
     }
 
-    public static String findPshdlExecutable(String executable, PshdlExtension options) {
+    public static String findModelsimAlteraExecutable(String executable, VSimExtension options, Set<String> paths) {
         ArrayList<String> subDirectories = new ArrayList<String>(options.paths)
         ArrayList<String> foundInstances = new ArrayList<String>()
 
@@ -36,22 +25,13 @@ class PshdlUtils {
 
             for (File path : baseFile.listFiles()) {
                 if (!path.isDirectory() && matches(baseFile.getName(), executable)) foundInstances.add(path.getAbsolutePath())
-                if (PSHDL_DIRS.contains(baseFile.getName()) || PSHDL_DIRS.contains(path.getName()) || i < baseCount) {
+                if (paths.contains(baseFile.getName()) || paths.contains(path.getName()) || i < baseCount) {
                     if (!subDirectories.contains(path.getAbsolutePath())) subDirectories.add(path.getAbsolutePath())
                 }
             }
         }
 
-        if (foundInstances.empty) {
-            return null;
-        } else if (foundInstances.size() > 1) {
-            for (String instance : foundInstances) {
-                System.err.println(instance)
-            }
-            throw new RuntimeException("Multiple Pshdl Installations found. Please define your local Installation Path.")
-        }
-
-        return foundInstances.get(0)
+        return (foundInstances.empty || foundInstances.size() > 1) ? null : foundInstances.get(0)
     }
 
 }

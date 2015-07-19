@@ -1,6 +1,6 @@
 package at.rknoll.gradle.hardware.language.vhdl
 
-import at.rknoll.parser.vhdl.VhdlBaseVisitor
+import at.rknoll.parser.vhdl.VhdlBaseListener
 import at.rknoll.parser.vhdl.VhdlLexer
 import at.rknoll.parser.vhdl.VhdlParser
 import org.antlr.v4.runtime.ANTLRInputStream
@@ -30,7 +30,7 @@ class VhdlFindDependenciesTask extends DefaultTask {
             dependsOn[file] = []
             definesUnits[file] = []
 
-            def visitor = new VhdlBaseVisitor<Void>() {
+            def visitor = new VhdlBaseListener() {
                 def defines(identifier) {
                     identifier = identifier.toLowerCase()
                     if (!definesUnits[file].contains(identifier)) {
@@ -47,41 +47,36 @@ class VhdlFindDependenciesTask extends DefaultTask {
                 }
 
                 @Override
-                Void visitEntity_declaration(VhdlParser.Entity_declarationContext ctx) {
+                void enterEntity_declaration(VhdlParser.Entity_declarationContext ctx) {
                     defines(ctx.identifier(0).text)
-                    return visitChildren(ctx);
                 }
 
                 @Override
-                Void visitPackage_declaration(VhdlParser.Package_declarationContext ctx) {
+                void enterPackage_declaration(VhdlParser.Package_declarationContext ctx) {
                     defines(ctx.identifier(0).text)
-                    return visitChildren(ctx);
                 }
 
                 @Override
-                Void visitUse_clause(VhdlParser.Use_clauseContext ctx) {
+                void enterUse_clause(VhdlParser.Use_clauseContext ctx) {
                     for (def selected : ctx.selected_name()) {
                         if (!selected.identifier().text.toLowerCase().equals("ieee")) {
                             depends(selected.suffix(0).identifier().text)
                         }
                     }
-                    return visitChildren(ctx);
                 }
 
                 @Override
-                Void visitArchitecture_body(VhdlParser.Architecture_bodyContext ctx) {
+                void enterArchitecture_body(VhdlParser.Architecture_bodyContext ctx) {
                     depends(ctx.identifier(1).text)
-                    return visitChildren(ctx);
                 }
 
                 @Override
-                Void visitPackage_body(VhdlParser.Package_bodyContext ctx) {
+                void enterPackage_body(VhdlParser.Package_bodyContext ctx) {
                     depends(ctx.identifier(0).text)
-                    return visitChildren(ctx);
                 }
 
                 @Override
-                Void visitInstantiated_unit(VhdlParser.Instantiated_unitContext ctx) {
+                void enterInstantiated_unit(VhdlParser.Instantiated_unitContext ctx) {
                     depends(ctx.name().selected_name().suffix(0).identifier().text)
                     return visitChildren(ctx);
                 }

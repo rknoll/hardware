@@ -18,7 +18,7 @@ class VhdlPrepareCompileTask extends SourceTask {
 
         sources.visit { file ->
             project.hardwareSourceInformation[file.file] = source
-			project.hardwareSources.addVertex(file.file)
+            project.hardwareSources.addVertex(file.file)
         }
     }
 
