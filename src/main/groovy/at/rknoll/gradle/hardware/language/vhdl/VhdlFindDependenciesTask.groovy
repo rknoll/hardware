@@ -78,7 +78,9 @@ class VhdlFindDependenciesTask extends DefaultTask {
 
                 @Override
                 void enterInstantiated_unit(VhdlParser.Instantiated_unitContext ctx) {
-                    depends(ctx.name().selected_name().suffix(0).identifier().text)
+                    def suffix = ctx.name().selected_name().suffix(0)
+                    def identifier = suffix != null ? suffix.identifier() : ctx.name().selected_name().identifier()
+                    depends(identifier.text)
                 }
             }
 
