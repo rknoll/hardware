@@ -1,7 +1,4 @@
-package at.rknoll.gradle.hardware;
-
-import java.io.File;
-
+package at.rknoll.gradle.hardware
 /**
  * The Base Interface of a Hardware Compiler Implementation.
  */

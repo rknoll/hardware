@@ -1,9 +1,10 @@
 package at.rknoll.gradle.hardware.language.pshdl
 
-import at.rknoll.gradle.hardware.HardwareCompilerContainer
+import at.rknoll.gradle.hardware.HardwareCompiler
 import at.rknoll.gradle.hardware.HardwarePlugin
 import at.rknoll.gradle.hardware.HardwarePluginConvention
 import org.gradle.api.Action
+import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.internal.file.FileResolver
@@ -27,12 +28,13 @@ class PshdlPlugin implements Plugin<Project> {
 
     public void apply(Project project) {
         HardwarePluginConvention hardwareConvention = project.getConvention().getPlugin(HardwarePluginConvention.class)
+        NamedDomainObjectContainer<HardwareCompiler> compilers = hardwareConvention.getHardwareCompilers()
 
         project.extensions.pshdl = new PshdlExtension()
-        HardwareCompilerContainer compilers = hardwareConvention.getHardwareCompilers()
 
         if (compilers.find { "pshdl".equals(it.name) } == null) {
             compilers.create("pshdl", {
+                it.updateOrder(compilers)
                 it.setDescription("pshdl dummy compiler")
                 it.setHardwareCompilerImpl(new PshdlDummyCompilerImpl())
             });

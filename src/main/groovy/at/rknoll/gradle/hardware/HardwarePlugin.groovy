@@ -35,7 +35,10 @@ class HardwarePlugin implements Plugin<ProjectInternal> {
     public void apply(ProjectInternal project) {
         project.getPlugins().apply(BasePlugin.class);
         project.getPlugins().apply(MavenPlugin.class);
-        HardwarePluginConvention hardwareConvention = new HardwarePluginConvention(project, instantiator);
+
+        def compilers = project.container(HardwareCompiler)
+
+        HardwarePluginConvention hardwareConvention = new HardwarePluginConvention(project, instantiator, compilers);
         project.getConvention().getPlugins().put("hardware", hardwareConvention);
 
         SourceSetContainer container = hardwareConvention.getSourceSets()

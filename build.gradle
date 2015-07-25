@@ -2,14 +2,14 @@ group = 'at.rknoll.gradle'
 version = '0.1'
 
 if (hasProperty('teamcity')) {
-	if (!property('teamcity')['build.number'].startsWith(version + "-")) {
-		version += '-' + property('teamcity')['build.number']
-		println "##teamcity[buildNumber '" + version + "']"
-	} else {
-		version = property('teamcity')['build.number']
-	}
+    if (!property('teamcity')['build.number'].startsWith(version + "-")) {
+        version += '-' + property('teamcity')['build.number']
+        println "##teamcity[buildNumber '" + version + "']"
+    } else {
+        version = property('teamcity')['build.number']
+    }
 } else {
-	version += '-SNAPSHOT'
+    version += '-SNAPSHOT'
 }
 
 buildscript {
@@ -30,23 +30,23 @@ apply plugin: 'com.gradle.plugin-publish'
 apply plugin: 'antlr'
 
 dependencies {
-	compile gradleApi()
-	compile localGroovy()
-	compile group: 'org.jgrapht', name: 'jgrapht-core', version: '0.9.0'
-	compile group: 'org.jgrapht', name: 'jgrapht-ext', version: '0.9.0'
-	compile group: 'commons-io', name: 'commons-io', version: '2.4'
+    compile gradleApi()
+    compile localGroovy()
+    compile group: 'org.jgrapht', name: 'jgrapht-core', version: '0.9.0'
+    compile group: 'org.jgrapht', name: 'jgrapht-ext', version: '0.9.0'
+    compile group: 'commons-io', name: 'commons-io', version: '2.4'
     compile group: 'com.intellij', name: 'forms_rt', version: '6.0.5'
     antlr "org.antlr:antlr4:4.5"
 }
 
 repositories {
-	mavenCentral()
-	jcenter()
+    mavenCentral()
+    jcenter()
 }
 
 ext.antlr = [
         outputDirectory: 'src/generated/antlr/',
-        destPackage: 'at.rknoll.parser.vhdl'
+        destPackage    : 'at.rknoll.parser.vhdl'
 ]
 
 generateGrammarSource {
@@ -80,7 +80,7 @@ uploadArchives {
             url System.getenv('IVY_HOST')
             layout 'maven'
         }
-	}
+    }
 }
 
 if (System.getenv('GRADLE_PUBLISH_KEY') != null) System.setProperty("gradle.publish.key", System.getenv('GRADLE_PUBLISH_KEY'))

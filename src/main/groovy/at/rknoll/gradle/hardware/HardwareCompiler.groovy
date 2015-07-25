@@ -1,8 +1,4 @@
-package at.rknoll.gradle.hardware;
-
-import java.io.File;
-import java.util.Set;
-
+package at.rknoll.gradle.hardware
 /**
  * Defines a Hardware Compiler Wrapper that uses an Instance of a {@link HardwareCompilerImpl}.
  */
@@ -28,23 +24,27 @@ public class HardwareCompiler implements Comparable<HardwareCompiler> {
     private int order;
 
     /**
-     * Creates a new Hardware Compiler with the given name and the current set of
-     * defined Compilers.
+     * Creates a new Hardware Compiler with the given name.
      *
-     * @param name      The Name of this new Hardware Compiler.
+     * @param name The Name of this new Hardware Compiler.
+     */
+    public HardwareCompiler(final String name) {
+        this.name = name;
+    }
+
+    /**
+     * Update the order, in which this compiler will be called.
+     *
      * @param compilers The current set of Hardware Compilers.
      */
-    public HardwareCompiler(final String name, final Set<HardwareCompiler> compilers) {
-        this.name = name;
+    public void updateOrder(final Set<HardwareCompiler> compilers) {
         this.order = 0;
-
         // check if there are any compilers already
         if (compilers != null && !compilers.isEmpty()) {
             // find the one with the highest order and order this behind it.
             // this will lead to the behaviour that the first defined Hardware Compiler
             // will be used if it is available.
-            final HardwareCompiler max = compilers.stream().max(HardwareCompiler::compareTo).get();
-            this.order = max.order + 1;
+            this.order = compilers.max().order + 1;
         }
     }
 

@@ -5,6 +5,7 @@ import at.rknoll.parser.vhdl.VhdlLexer
 import at.rknoll.parser.vhdl.VhdlParser
 import org.antlr.v4.runtime.ANTLRInputStream
 import org.antlr.v4.runtime.CommonTokenStream
+import org.antlr.v4.runtime.tree.ParseTreeWalker
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
 
@@ -30,7 +31,7 @@ class VhdlFindDependenciesTask extends DefaultTask {
             dependsOn[file] = []
             definesUnits[file] = []
 
-            def visitor = new VhdlBaseListener() {
+            def listener = new VhdlBaseListener() {
                 def defines(identifier) {
                     identifier = identifier.toLowerCase()
                     if (!definesUnits[file].contains(identifier)) {
@@ -83,7 +84,8 @@ class VhdlFindDependenciesTask extends DefaultTask {
 
             println "analyzing " + file.name + "..."
 
-            visitor.visit(designFile)
+            def walker = new ParseTreeWalker()
+            walker.walk(listener, designFile)
         }
 
         for (File file : project.hardwareSources.vertexSet()) {
