@@ -5,7 +5,6 @@ import at.rknoll.gradle.hardware.compiler.quartus.tasks.QuartusAsmTask
 import at.rknoll.gradle.hardware.compiler.quartus.tasks.QuartusFitTask
 import at.rknoll.gradle.hardware.compiler.quartus.tasks.QuartusMapTask
 import at.rknoll.gradle.hardware.compiler.quartus.tasks.QuartusStaTask
-import at.rknoll.gradle.hardware.language.soc.HardwareUiTask
 import at.rknoll.gradle.hardware.toplevel.TopLevelExtension
 import org.gradle.api.DefaultTask
 import org.gradle.api.Plugin
@@ -40,8 +39,6 @@ class QuartusPlugin implements Plugin<Project> {
         syn.outputs.upToDateWhen { false }
 
         project.tasks.clean.dependsOn('cleanSynthesize')
-
-        project.tasks.create(HardwareUiTask.HARDWARE_UI_TASK_NAME, HardwareUiTask.class);
     }
 
 }
