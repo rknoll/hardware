@@ -15,7 +15,7 @@ class QuartusUtilsTest {
         QuartusExtension ext = new QuartusExtension();
         ext.path = dir.getAbsolutePath()
 
-        QuartusUtils.findQuartusExecutable("quartus.exe", ext)
+        QuartusUtils.findQuartusExecutable "quartus.exe", ext
 
         dir.deleteOnExit()
         file.deleteOnExit()

@@ -13,8 +13,8 @@ class QuartusMapTask extends BaseQuartusTask {
 
     QuartusMapTask() {
         super("quartus_map")
-        setDescription("Analysis and Synthesis with Quartus.");
-        setGroup(QuartusPlugin.SYNTHESIZE_GROUP)
+        setDescription "Analysis and Synthesis with Quartus."
+        setGroup QuartusPlugin.SYNTHESIZE_GROUP
     }
 
     @Override

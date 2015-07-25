@@ -14,10 +14,10 @@ import org.slf4j.LoggerFactory
  */
 abstract class BaseQuartusTask extends DefaultTask {
     protected Logger logger
-    private final String app;
+    private final String app
 
     BaseQuartusTask(String app) {
-        this.app = app;
+        this.app = app
     }
 
     def runQuartus(args) {
@@ -36,8 +36,6 @@ abstract class BaseQuartusTask extends DefaultTask {
             if (exitCode != 0) {
                 throw new TaskExecutionException(this, new Exception("Error " + exitCode + " while executing '" + args.join(" ") + "'\noutput:\n" + output));
             }
-
-            //logger.print("quartus output:\n" + output)
         }
     }
 

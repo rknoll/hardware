@@ -10,7 +10,7 @@ class QuartusStaTask extends BaseQuartusTask {
 
     QuartusStaTask() {
         super("quartus_sta")
-        setDescription("Timing Analysis with Quartus.");
-        setGroup(QuartusPlugin.SYNTHESIZE_GROUP)
+        setDescription "Timing Analysis with Quartus."
+        setGroup QuartusPlugin.SYNTHESIZE_GROUP
     }
 }

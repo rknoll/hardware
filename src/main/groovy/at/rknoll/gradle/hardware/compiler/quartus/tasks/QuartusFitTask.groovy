@@ -10,7 +10,7 @@ class QuartusFitTask extends BaseQuartusTask {
 
     QuartusFitTask() {
         super("quartus_fit")
-        setDescription("Fitting with Quartus.");
-        setGroup(QuartusPlugin.SYNTHESIZE_GROUP)
+        setDescription "Fitting with Quartus."
+        setGroup QuartusPlugin.SYNTHESIZE_GROUP
     }
 }

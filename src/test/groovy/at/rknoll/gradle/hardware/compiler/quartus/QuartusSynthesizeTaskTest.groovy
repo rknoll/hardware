@@ -11,8 +11,8 @@ class QuartusSynthesizeTaskTest {
     @Test
     public void canAddTaskToProject() {
         Project project = ProjectBuilder.builder().build()
-        def task = project.task('synthesizeTest', type: QuartusSynthesizeTask)
-        assertTrue(task instanceof QuartusSynthesizeTask)
+        def task = project.task 'synthesizeTest', type: QuartusSynthesizeTask
+        assertTrue task instanceof QuartusSynthesizeTask
     }
 
 }

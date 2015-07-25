@@ -1,17 +1,13 @@
 package at.rknoll.gradle.hardware.language.pshdl
 
-import at.rknoll.gradle.hardware.HardwareCompiler
 import at.rknoll.gradle.hardware.HardwarePlugin
-import at.rknoll.gradle.hardware.HardwarePluginConvention
 import org.gradle.api.Action
-import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.internal.HasConvention
 import org.gradle.api.internal.file.FileResolver
-import org.gradle.api.internal.plugins.DslObject
 import org.gradle.api.internal.tasks.DefaultSourceSet
 import org.gradle.api.tasks.SourceSet
-import org.gradle.api.tasks.SourceSetContainer
 
 import javax.inject.Inject
 
@@ -27,41 +23,38 @@ class PshdlPlugin implements Plugin<Project> {
     }
 
     public void apply(Project project) {
-        HardwarePluginConvention hardwareConvention = project.getConvention().getPlugin(HardwarePluginConvention.class)
-        NamedDomainObjectContainer<HardwareCompiler> compilers = hardwareConvention.getHardwareCompilers()
+        project.plugins.apply HardwarePlugin.class
 
         project.extensions.pshdl = new PshdlExtension()
 
-        if (compilers.find { "pshdl".equals(it.name) } == null) {
-            compilers.create("pshdl", {
-                it.updateOrder(compilers)
+        if (project.hardwareCompilers.find { "pshdl".equals(it.name) } == null) {
+            project.hardwareCompilers.create("pshdl", {
+                it.updateOrder(project.hardwareCompilers)
                 it.setDescription("pshdl dummy compiler")
                 it.setHardwareCompilerImpl(new PshdlDummyCompilerImpl())
             });
         }
 
-        SourceSetContainer container = hardwareConvention.getSourceSets()
+        project.sourceSets.all([execute: { SourceSet sourceSet ->
+            def pshdlSourceSet = new DefaultPshdlSourceSet((sourceSet as DefaultSourceSet).displayName, fileResolver)
+            (sourceSet as HasConvention).convention.plugins.put "pshdl", pshdlSourceSet
 
-        container.all(new Action<SourceSet>() {
-            public void execute(SourceSet sourceSet) {
-                final DefaultPshdlSourceSet pshdlSourceSet = new DefaultPshdlSourceSet(((DefaultSourceSet) sourceSet).getDisplayName(), fileResolver);
-                new DslObject(sourceSet).getConvention().getPlugins().put("pshdl", pshdlSourceSet);
+            pshdlSourceSet.pshdl.srcDir String.format("src/%s/pshdl", sourceSet.name)
+            sourceSet.allSource.source pshdlSourceSet.pshdl
 
-                pshdlSourceSet.getPshdl().srcDir(String.format("src/%s/pshdl", sourceSet.getName()));
-                sourceSet.getAllSource().source(pshdlSourceSet.getPshdl());
-
-                String prepareTaskName = "prepare" + sourceSet.getName().toLowerCase().capitalize() + "PshdlCompile";
-                String cleanPrepareTaskName = "cleanPrepare" + sourceSet.getName().toLowerCase().capitalize() + "PshdlCompile";
-                PshdlPrepareCompileTask prepare = project.getTasks().create(prepareTaskName, PshdlPrepareCompileTask.class);
-                prepare.setDescription(String.format("Prepares to Compile the %s Pshdl source.", sourceSet.getName()));
-                prepare.setGroup(HardwarePlugin.PREPARE_GROUP_NAME);
-                prepare.setSource(pshdlSourceSet.getPshdl());
-                project.getTasks().getByName(HardwarePlugin.PREPARE_TASK_NAME).dependsOn(prepareTaskName);
-                prepare.outputs.dir new File(project.projectDir, "generated/")
-                prepare.outputs.upToDateWhen { false }
-                project.tasks.clean.dependsOn(cleanPrepareTaskName)
+            String prepareTaskName = "prepare" + sourceSet.name.toLowerCase().capitalize() + "PshdlCompile"
+            String cleanPrepareTaskName = "cleanPrepare" + sourceSet.name.toLowerCase().capitalize() + "PshdlCompile"
+            project.tasks.create(prepareTaskName, PshdlPrepareCompileTask.class) {
+                it.setDescription String.format("Prepares to Compile the %s Pshdl source.", sourceSet.name)
+                it.setGroup HardwarePlugin.PREPARE_GROUP_NAME
+                it.setSource pshdlSourceSet.pshdl
+                it.outputs.dir new File(project.projectDir, "generated/")
+                it.outputs.upToDateWhen { false }
             }
-        });
+
+            project.tasks.getByName(HardwarePlugin.PREPARE_TASK_NAME).dependsOn prepareTaskName
+            project.tasks.clean.dependsOn cleanPrepareTaskName
+        }] as Action<SourceSet>)
 
         project.afterEvaluate {
             project.repositories {

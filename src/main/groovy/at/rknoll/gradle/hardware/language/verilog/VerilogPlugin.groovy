@@ -1,15 +1,13 @@
 package at.rknoll.gradle.hardware.language.verilog
 
 import at.rknoll.gradle.hardware.HardwarePlugin
-import at.rknoll.gradle.hardware.HardwarePluginConvention
 import org.gradle.api.Action
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.internal.HasConvention
 import org.gradle.api.internal.file.FileResolver
-import org.gradle.api.internal.plugins.DslObject
 import org.gradle.api.internal.tasks.DefaultSourceSet
 import org.gradle.api.tasks.SourceSet
-import org.gradle.api.tasks.SourceSetContainer
 
 import javax.inject.Inject
 
@@ -25,32 +23,32 @@ class VerilogPlugin implements Plugin<Project> {
     }
 
     public void apply(Project project) {
-        HardwarePluginConvention hardwareConvention = project.getConvention().getPlugin(HardwarePluginConvention.class)
-        SourceSetContainer container = hardwareConvention.getSourceSets()
+        project.plugins.apply HardwarePlugin.class
 
-        container.all(new Action<SourceSet>() {
-            public void execute(SourceSet sourceSet) {
-                final DefaultVerilogSourceSet verilogSourceSet = new DefaultVerilogSourceSet(((DefaultSourceSet) sourceSet).getDisplayName(), fileResolver);
-                new DslObject(sourceSet).getConvention().getPlugins().put("verilog", verilogSourceSet);
+        project.sourceSets.all([execute: { SourceSet sourceSet ->
+            def verilogSourceSet = new DefaultVerilogSourceSet((sourceSet as DefaultSourceSet).displayName, fileResolver)
+            (sourceSet as HasConvention).convention.plugins.put "verilog", verilogSourceSet
 
-                verilogSourceSet.getVerilog().srcDir(String.format("src/%s/verilog", sourceSet.getName()));
-                sourceSet.getAllSource().source(verilogSourceSet.getVerilog());
+            verilogSourceSet.verilog.srcDir String.format("src/%s/verilog", sourceSet.name)
+            sourceSet.allSource.source verilogSourceSet.verilog
 
-                String prepareTaskName = "prepare" + sourceSet.getName().toLowerCase().capitalize() + "VerilogCompile";
-                VerilogPrepareCompileTask prepare = project.getTasks().create(prepareTaskName, VerilogPrepareCompileTask.class);
-                prepare.setDescription(String.format("Prepares to Compile the %s Verilog source.", sourceSet.getName()));
-                prepare.setSource(verilogSourceSet.getVerilog());
-                prepare.setGroup(HardwarePlugin.PREPARE_GROUP_NAME);
-                project.getTasks().getByName(HardwarePlugin.PREPARE_TASK_NAME).dependsOn(prepareTaskName);
-
-                String dependenciesTaskName = "find" + sourceSet.getName().toLowerCase().capitalize() + "VerilogDependencies";
-                VerilogFindDependenciesTask dependencies = project.getTasks().create(dependenciesTaskName, VerilogFindDependenciesTask.class);
-                dependencies.setDescription(String.format("Finds dependencies of the %s Verilog source.", sourceSet.getName()));
-                dependencies.setGroup(HardwarePlugin.DEPENDENCIES_GROUP_NAME);
-                project.getTasks().getByName(HardwarePlugin.HARDWARE_COMPILE_TASK_NAME).dependsOn(dependenciesTaskName);
-                dependencies.dependsOn(HardwarePlugin.PREPARE_TASK_NAME);
+            String prepareTaskName = "prepare" + sourceSet.name.toLowerCase().capitalize() + "VerilogCompile"
+            project.tasks.create(prepareTaskName, VerilogPrepareCompileTask.class) {
+                it.setDescription String.format("Prepares to Compile the %s Verilog source.", sourceSet.name)
+                it.setSource verilogSourceSet.verilog
+                it.setGroup HardwarePlugin.PREPARE_GROUP_NAME
             }
-        });
+
+            String dependenciesTaskName = "find" + sourceSet.name.toLowerCase().capitalize() + "VerilogDependencies"
+            project.tasks.create(dependenciesTaskName, VerilogFindDependenciesTask.class) {
+                it.setDescription String.format("Finds dependencies of the %s Verilog source.", sourceSet.getName())
+                it.setGroup HardwarePlugin.DEPENDENCIES_GROUP_NAME
+                it.dependsOn HardwarePlugin.PREPARE_TASK_NAME
+            }
+
+            project.tasks.getByName(HardwarePlugin.HARDWARE_COMPILE_TASK_NAME).dependsOn dependenciesTaskName
+            project.tasks.getByName(HardwarePlugin.PREPARE_TASK_NAME).dependsOn prepareTaskName
+        }] as Action<SourceSet>)
     }
 
 }

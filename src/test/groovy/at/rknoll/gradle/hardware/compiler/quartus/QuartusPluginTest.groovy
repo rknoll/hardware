@@ -8,12 +8,12 @@ import static org.junit.Assert.assertTrue
 
 class QuartusPluginTest {
 
-	@Test
-	public void quartusPluginAddsSynthesizeTaskToProject() {
-		Project project = ProjectBuilder.builder().build()
-		project.apply plugin: 'quartus'
-		println 'quartusPluginAddsSynthesizeTaskToProject'
-		assertTrue(project.tasks.synthesize instanceof QuartusSynthesizeTask)
-	}
+    @Test
+    public void quartusPluginAddsSynthesizeTaskToProject() {
+        Project project = ProjectBuilder.builder().build()
+        project.apply plugin: 'quartus'
+        println 'quartusPluginAddsSynthesizeTaskToProject'
+        assertTrue project.tasks.synthesize instanceof QuartusSynthesizeTask
+    }
 
 }

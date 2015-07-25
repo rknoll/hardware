@@ -10,7 +10,7 @@ class QuartusAsmTask extends BaseQuartusTask {
 
     QuartusAsmTask() {
         super("quartus_asm")
-        setDescription("Place and Route with Quartus.");
-        setGroup(QuartusPlugin.SYNTHESIZE_GROUP)
+        setDescription "Place and Route with Quartus."
+        setGroup QuartusPlugin.SYNTHESIZE_GROUP
     }
 }

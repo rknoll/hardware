@@ -3,6 +3,7 @@ package at.rknoll.gradle.hardware
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.internal.tasks.DefaultSourceSetContainer
+import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.internal.reflect.Instantiator
 import org.jgrapht.graph.DefaultDirectedGraph
@@ -19,15 +20,19 @@ class HardwarePluginConvention {
         this.project = project
         sourceSets = instantiator.newInstance(DefaultSourceSetContainer.class, project.fileResolver, project.tasks, instantiator)
         hardwareCompilers = compilers
-        hardwareSources = new DefaultDirectedGraph<File, DefaultEdge>(DefaultEdge.class);
+        hardwareSources = new DefaultDirectedGraph<File, DefaultEdge>(DefaultEdge.class)
         hardwareSourceInformation = new HashMap<>()
+
+        // create main and test source sets if not already defined
+        sourceSets.maybeCreate SourceSet.MAIN_SOURCE_SET_NAME
+        sourceSets.maybeCreate SourceSet.TEST_SOURCE_SET_NAME
     }
 
     def sourceSets(Closure closure) {
-        sourceSets.configure(closure)
+        sourceSets.configure closure
     }
 
     def hardwareCompilers(Closure closure) {
-        hardwareCompilers.configure(closure)
+        hardwareCompilers.configure closure
     }
 }
