@@ -5,7 +5,6 @@ import at.rknoll.gradle.hardware.language.verilog.VerilogPlugin
 import at.rknoll.gradle.hardware.language.vhdl.VhdlPlugin
 import org.gradle.api.DefaultTask
 import org.gradle.api.Plugin
-import org.gradle.api.Task
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.plugins.MavenPlugin
@@ -78,16 +77,14 @@ class HardwarePlugin implements Plugin<ProjectInternal> {
             }
         }
 
-        Task zipTask = project.tasks.create("sources", Zip.class) {
+        def zipTask = project.tasks.create("sources", Zip.class) {
             it.setDescription "Zips all sources of this project."
             it.setGroup DEPENDENCIES_GROUP_NAME
             it.dependsOn PREPARE_TASK_NAME
             it.from project.sourceSets.main.allSource
         }
 
-        project.artifacts {
-            runtime zipTask
-        }
+        project.artifacts.add "runtime", zipTask
 
         project.tasks.clean.dependsOn 'cleanExtractDependencies'
         project.tasks.clean.dependsOn 'cleanHardwareCompile'
