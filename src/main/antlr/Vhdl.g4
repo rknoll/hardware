@@ -963,7 +963,7 @@ name
   ;
 
 name_part
-   : selected_name (name_attribute_part | name_function_call_or_indexed_part | name_slice_part)?
+   : selected_name (name_attribute_part | name_function_call_or_indexed_part | name_slice_part)*
    ;
    
 name_attribute_part
