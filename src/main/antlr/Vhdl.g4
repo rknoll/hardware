@@ -205,7 +205,7 @@ alias_declaration
 
 alias_designator
   : identifier
-  | CHARACTER_LITERAL
+  | character_literal
   | STRING_LITERAL
   ;
 
@@ -265,7 +265,7 @@ assertion_statement
   ;
 
 association_element
-  : ( formal_part ARROW )? actual_part
+  : ( name_part ARROW )? actual_part
   ;
 
 association_list
@@ -673,13 +673,13 @@ entity_statement_part
 
 entity_tag
   : identifier
-  | CHARACTER_LITERAL
+  | character_literal
   | STRING_LITERAL
   ;
 
 enumeration_literal
   : identifier
-  | CHARACTER_LITERAL
+  | character_literal
   ;
 
 enumeration_type_definition
@@ -723,11 +723,6 @@ formal_parameter_list
   : interface_list
   ;
 
-formal_part
-  : identifier
-   | identifier LPAREN explicit_range  RPAREN 
-  ;
-
 free_quantity_declaration
   : QUANTITY identifier_list COLON subtype_indication
     ( VARASGN expression )? SEMI
@@ -760,7 +755,7 @@ generic_map_aspect
 
 group_constituent
   : name
-  | CHARACTER_LITERAL
+  | character_literal
   ;
 
 group_constituent_list
@@ -862,7 +857,8 @@ interface_quantity_declaration
   ;
 
 interface_port_declaration
-  : identifier_list COLON signal_mode subtype_indication
+  : ( SIGNAL ) ?
+    identifier_list COLON signal_mode subtype_indication ( VARASGN expression )?
     ( BUS )?
   ;
 
@@ -901,6 +897,7 @@ literal
   : NULL
   | BIT_STRING_LITERAL
   | STRING_LITERAL
+  | character_literal
   | enumeration_literal
   | numeric_literal
   ;
@@ -1100,8 +1097,8 @@ port_map_aspect
   ;
 
 primary
-  : literal
-  | qualified_expression
+  : qualified_expression
+  | literal
   | LPAREN expression RPAREN
   | allocator
   | aggregate
@@ -1477,7 +1474,7 @@ subtype_indication
 
 suffix
   : identifier
-  | CHARACTER_LITERAL
+  | character_literal
   | STRING_LITERAL
   | ALL
   ;
@@ -1630,7 +1627,7 @@ CR
   : '\r' -> skip 
   ;
   
-CHARACTER_LITERAL
+character_literal
    : APOSTROPHE . APOSTROPHE
    ;
 

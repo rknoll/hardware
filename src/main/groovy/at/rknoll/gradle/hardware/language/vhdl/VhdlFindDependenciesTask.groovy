@@ -19,6 +19,8 @@ class VhdlFindDependenciesTask extends DefaultTask {
         for (File file : project.hardwareSources.vertexSet()) {
             if (!VhdlUtils.isVhdlFile(file)) continue
 
+            println "analyzing " + file.name + "..."
+
             // construct lexer and parsers
             def stream = new ANTLRInputStream(file.text)
             def lexer = new VhdlLexer(stream)
@@ -61,7 +63,8 @@ class VhdlFindDependenciesTask extends DefaultTask {
                 void enterUse_clause(VhdlParser.Use_clauseContext ctx) {
                     for (def selected : ctx.selected_name()) {
                         if (!selected.identifier().text.toLowerCase().equals("ieee")) {
-                            depends(selected.suffix(0).identifier().text)
+                            def identifier = selected.suffix(0).identifier()
+                            depends(identifier != null ? identifier.text : selected.identifier().text)
                         }
                     }
                 }
@@ -83,8 +86,6 @@ class VhdlFindDependenciesTask extends DefaultTask {
                     depends(identifier.text)
                 }
             }
-
-            println "analyzing " + file.name + "..."
 
             def walker = new ParseTreeWalker()
             walker.walk(listener, designFile)
