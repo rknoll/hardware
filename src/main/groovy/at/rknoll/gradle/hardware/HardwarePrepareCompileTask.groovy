@@ -27,11 +27,12 @@ class HardwarePrepareCompileTask extends DefaultTask {
             source.version = art.moduleVersion.id.version
             FileTree sources = project.fileTree(dir: moduleDirName)
             sources.visit { file ->
-                project.hardwareSourceInformation[file.file] = source
-                project.hardwareSources.addVertex(file.file)
+                if (!file.isDirectory()) {
+                    project.hardwareSourceInformation[file.file] = source
+                    project.hardwareSources.addVertex(file.file)
+                }
             }
         }
-
     }
 
 }
