@@ -41,7 +41,9 @@ class PshdlPrepareCompileTask extends DefaultTask {
         def allPshdlFiles = []
 
         getSource().visit { file ->
-            allPshdlFiles.add(file.file)
+            if (!file.isDirectory()) {
+                allPshdlFiles.add(file.file)
+            }
         }
 
         def sourceInfo = new HardwareSourceInformation()

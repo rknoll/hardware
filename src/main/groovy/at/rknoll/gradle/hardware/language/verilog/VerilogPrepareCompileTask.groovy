@@ -17,8 +17,10 @@ class VerilogPrepareCompileTask extends SourceTask {
         source.version = project.version
 
         sources.visit { file ->
-            project.hardwareSourceInformation[file.file] = source
-            project.hardwareSources.addVertex(file.file)
+            if (!file.isDirectory()) {
+                project.hardwareSourceInformation[file.file] = source
+                project.hardwareSources.addVertex(file.file)
+            }
         }
     }
 
