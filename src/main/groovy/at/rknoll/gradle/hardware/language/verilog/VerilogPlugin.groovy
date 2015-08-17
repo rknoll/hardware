@@ -11,9 +11,6 @@ import org.gradle.api.tasks.SourceSet
 
 import javax.inject.Inject
 
-/**
- * Created by rknoll on 20/07/14.
- */
 class VerilogPlugin implements Plugin<Project> {
     private final FileResolver fileResolver
 
@@ -23,7 +20,7 @@ class VerilogPlugin implements Plugin<Project> {
     }
 
     public void apply(Project project) {
-        project.plugins.apply HardwarePlugin.class
+        project.plugins.apply HardwarePlugin
 
         project.sourceSets.all([execute: { SourceSet sourceSet ->
             def verilogSourceSet = new DefaultVerilogSourceSet((sourceSet as DefaultSourceSet).displayName, fileResolver)
@@ -33,14 +30,14 @@ class VerilogPlugin implements Plugin<Project> {
             sourceSet.allSource.source verilogSourceSet.verilog
 
             String prepareTaskName = "prepare" + sourceSet.name.toLowerCase().capitalize() + "VerilogCompile"
-            project.tasks.create(prepareTaskName, VerilogPrepareCompileTask.class) {
+            project.tasks.create(prepareTaskName, VerilogPrepareCompileTask) {
                 it.setDescription String.format("Prepares to Compile the %s Verilog source.", sourceSet.name)
                 it.setSource verilogSourceSet.verilog
                 it.setGroup HardwarePlugin.PREPARE_GROUP_NAME
             }
 
             String dependenciesTaskName = "find" + sourceSet.name.toLowerCase().capitalize() + "VerilogDependencies"
-            project.tasks.create(dependenciesTaskName, VerilogFindDependenciesTask.class) {
+            project.tasks.create(dependenciesTaskName, VerilogFindDependenciesTask) {
                 it.setDescription String.format("Finds dependencies of the %s Verilog source.", sourceSet.getName())
                 it.setGroup HardwarePlugin.DEPENDENCIES_GROUP_NAME
                 it.dependsOn HardwarePlugin.PREPARE_TASK_NAME

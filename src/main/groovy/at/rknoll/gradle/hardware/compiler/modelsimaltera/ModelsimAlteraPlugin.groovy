@@ -1,20 +1,25 @@
 package at.rknoll.gradle.hardware.compiler.modelsimaltera
 
 import at.rknoll.gradle.hardware.HardwarePlugin
+import at.rknoll.gradle.hardware.HardwarePluginConvention
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
 class ModelsimAlteraPlugin implements Plugin<Project> {
+    public static final String NAME = "modelsimaltera"
 
     def void apply(Project project) {
-        project.plugins.apply HardwarePlugin.class
+        project.plugins.apply HardwarePlugin
 
-        project.extensions.modelsimaltera = new ModelsimAlteraExtension()
+        project.extensions.create NAME, ModelsimAlteraExtension
 
-        if (project.hardwareCompilers.find { ModelsimAlteraCompilerImpl.NAME.equals(it.name) } == null) {
-            project.hardwareCompilers.create(ModelsimAlteraCompilerImpl.NAME, {
-                it.updateOrder project.hardwareCompilers
-                it.setDescription "compile with modelsimaltera"
+        def convention = project.convention.getPlugin HardwarePluginConvention
+        def compilers = convention.hardwareCompilers
+
+        if (compilers.findByName(NAME) == null) {
+            compilers.create(NAME, {
+                it.updateOrder compilers
+                it.setDescription "compile with " + NAME
                 it.setHardwareCompilerImpl new ModelsimAlteraCompilerImpl(project)
             })
         }

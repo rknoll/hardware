@@ -1,7 +1,7 @@
 package at.rknoll.gradle.hardware.language.pshdl
 
+import at.rknoll.utils.ExecUtils
 import org.gradle.api.Project
-import org.gradle.process.ExecResult
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -43,24 +43,11 @@ class PshdlConverter {
             File destDir = new File(entry.key)
             destDir.mkdirs()
 
-            def line = args.clone()
-            line += ["vhdl", "-o", destDir.getAbsolutePath()]
-            entry.value.each { line.add(it) }
+            def line = args.collect()
+            line.addAll(["vhdl", "-o", destDir.getAbsolutePath()])
+            line.addAll(entry.value)
 
-            new ByteArrayOutputStream().withStream { os ->
-                ExecResult result = project.exec {
-                    commandLine = line
-                    standardOutput = os
-                    ignoreExitValue = true
-                }
-
-                String output = os.toString()
-                int exitCode = result.getExitValue()
-
-                if (exitCode != 0 || output.contains("ERROR at line")) {
-                    throw new RuntimeException("Error " + exitCode + " while executing '" + args.join(" ") + "'\noutput:\n" + output);
-                }
-            }
+            ExecUtils.exec(project, line)
         }
     }
 }

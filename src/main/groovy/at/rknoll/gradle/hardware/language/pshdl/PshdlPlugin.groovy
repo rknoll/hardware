@@ -1,6 +1,7 @@
 package at.rknoll.gradle.hardware.language.pshdl
 
 import at.rknoll.gradle.hardware.HardwarePlugin
+import at.rknoll.gradle.hardware.HardwarePluginConvention
 import org.gradle.api.Action
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -11,10 +12,9 @@ import org.gradle.api.tasks.SourceSet
 
 import javax.inject.Inject
 
-/**
- * Created by rknoll on 20/07/14.
- */
 class PshdlPlugin implements Plugin<Project> {
+    public static final String NAME = "pshdl"
+
     private final FileResolver fileResolver
 
     @Inject
@@ -23,16 +23,19 @@ class PshdlPlugin implements Plugin<Project> {
     }
 
     public void apply(Project project) {
-        project.plugins.apply HardwarePlugin.class
+        project.plugins.apply HardwarePlugin
 
-        project.extensions.pshdl = new PshdlExtension()
+        project.extensions.create NAME, PshdlExtension
 
-        if (project.hardwareCompilers.find { "pshdl".equals(it.name) } == null) {
-            project.hardwareCompilers.create("pshdl", {
-                it.updateOrder(project.hardwareCompilers)
-                it.setDescription("pshdl dummy compiler")
-                it.setHardwareCompilerImpl(new PshdlDummyCompilerImpl())
-            });
+        def convention = project.convention.getPlugin HardwarePluginConvention
+        def compilers = convention.hardwareCompilers
+
+        if (compilers.findByName(NAME) == null) {
+            compilers.create(NAME, {
+                it.updateOrder compilers
+                it.setDescription "pshdl dummy compiler"
+                it.setHardwareCompilerImpl new PshdlDummyCompilerImpl()
+            })
         }
 
         project.sourceSets.all([execute: { SourceSet sourceSet ->
@@ -44,7 +47,7 @@ class PshdlPlugin implements Plugin<Project> {
 
             String prepareTaskName = "prepare" + sourceSet.name.toLowerCase().capitalize() + "PshdlCompile"
             String cleanPrepareTaskName = "cleanPrepare" + sourceSet.name.toLowerCase().capitalize() + "PshdlCompile"
-            project.tasks.create(prepareTaskName, PshdlPrepareCompileTask.class) {
+            project.tasks.create(prepareTaskName, PshdlPrepareCompileTask) {
                 it.setDescription String.format("Prepares to Compile the %s Pshdl source.", sourceSet.name)
                 it.setGroup HardwarePlugin.PREPARE_GROUP_NAME
                 it.setSource pshdlSourceSet.pshdl

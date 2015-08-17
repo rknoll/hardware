@@ -7,7 +7,7 @@ class VerilogFindDependenciesTask extends DefaultTask {
 
     @TaskAction
     def compile() {
-        // TODO: find internal dependencies for this file
+        // TODO: find internal dependencies for verilog source
     }
 
 }

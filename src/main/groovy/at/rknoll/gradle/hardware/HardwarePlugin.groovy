@@ -13,9 +13,6 @@ import org.gradle.internal.reflect.Instantiator
 
 import javax.inject.Inject
 
-/**
- * Created by rknoll on 20/07/14.
- */
 class HardwarePlugin implements Plugin<ProjectInternal> {
     private final Instantiator instantiator
     public static final String PREPARE_TASK_NAME = "prepareHardwareCompile"
@@ -30,8 +27,8 @@ class HardwarePlugin implements Plugin<ProjectInternal> {
     }
 
     public void apply(ProjectInternal project) {
-        project.plugins.apply BasePlugin.class
-        project.plugins.apply MavenPlugin.class
+        project.plugins.apply BasePlugin
+        project.plugins.apply MavenPlugin
 
         def compilers = project.container(HardwareCompiler)
         def hardwareConvention = new HardwarePluginConvention(project, instantiator, compilers)
@@ -46,7 +43,7 @@ class HardwarePlugin implements Plugin<ProjectInternal> {
             delegate.default.extendsFrom runtime
         }
 
-        project.tasks.create(EXTRACT_DEPS_TASK_NAME, HardwarePrepareCompileTask.class) {
+        project.tasks.create(EXTRACT_DEPS_TASK_NAME, HardwarePrepareCompileTask) {
             it.setDescription "Extracts all dependencies of this project."
             it.setGroup PREPARE_GROUP_NAME
             it.dependsOn project.configurations.compile
@@ -54,13 +51,13 @@ class HardwarePlugin implements Plugin<ProjectInternal> {
             it.outputs.upToDateWhen { false }
         }
 
-        project.tasks.create(PREPARE_TASK_NAME, DefaultTask.class) {
+        project.tasks.create(PREPARE_TASK_NAME, DefaultTask) {
             it.setDescription "Prepares to Compile this project."
             it.setGroup PREPARE_GROUP_NAME
             it.dependsOn EXTRACT_DEPS_TASK_NAME
         }
 
-        project.tasks.create(HARDWARE_COMPILE_TASK_NAME, HardwareCompileTask.class) {
+        project.tasks.create(HARDWARE_COMPILE_TASK_NAME, HardwareCompileTask) {
             it.setDescription "Compile Hardware."
             it.setGroup BasePlugin.BUILD_GROUP
             it.setSource project.sourceSets.main.getAllSource()
@@ -71,13 +68,13 @@ class HardwarePlugin implements Plugin<ProjectInternal> {
         }
 
         if (project.tasks.findByName("build") == null) {
-            project.tasks.create("build", DefaultTask.class) {
+            project.tasks.create("build", DefaultTask) {
                 it.setDescription "Builds this project."
                 it.setGroup BasePlugin.BUILD_GROUP
             }
         }
 
-        def zipTask = project.tasks.create("sources", Zip.class) {
+        def zipTask = project.tasks.create("sources", Zip) {
             it.setDescription "Zips all sources of this project."
             it.setGroup DEPENDENCIES_GROUP_NAME
             it.dependsOn PREPARE_TASK_NAME
@@ -91,8 +88,8 @@ class HardwarePlugin implements Plugin<ProjectInternal> {
         project.tasks.build.dependsOn HARDWARE_COMPILE_TASK_NAME
 
         // apply all supported language plugins
-        project.plugins.apply VhdlPlugin.class
-        project.plugins.apply VerilogPlugin.class
-        project.plugins.apply PshdlPlugin.class
+        project.plugins.apply VhdlPlugin
+        project.plugins.apply VerilogPlugin
+        project.plugins.apply PshdlPlugin
     }
 }

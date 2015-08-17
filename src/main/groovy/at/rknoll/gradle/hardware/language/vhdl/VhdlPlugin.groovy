@@ -11,9 +11,6 @@ import org.gradle.api.tasks.SourceSet
 
 import javax.inject.Inject
 
-/**
- * Created by rknoll on 20/07/14.
- */
 class VhdlPlugin implements Plugin<Project> {
     private final FileResolver fileResolver
 
@@ -23,7 +20,7 @@ class VhdlPlugin implements Plugin<Project> {
     }
 
     public void apply(Project project) {
-        project.plugins.apply HardwarePlugin.class
+        project.plugins.apply HardwarePlugin
 
         project.sourceSets.all([execute: { SourceSet sourceSet ->
             def vhdlSourceSet = new DefaultVhdlSourceSet((sourceSet as DefaultSourceSet).displayName, fileResolver)
@@ -33,14 +30,14 @@ class VhdlPlugin implements Plugin<Project> {
             sourceSet.allSource.source vhdlSourceSet.vhdl
 
             String prepareTaskName = "prepare" + sourceSet.name.toLowerCase().capitalize() + "VhdlCompile"
-            project.tasks.create(prepareTaskName, VhdlPrepareCompileTask.class) {
+            project.tasks.create(prepareTaskName, VhdlPrepareCompileTask) {
                 it.setDescription String.format("Prepares to Compile the %s Vhdl source.", sourceSet.name)
                 it.setSource vhdlSourceSet.vhdl
                 it.setGroup HardwarePlugin.PREPARE_GROUP_NAME
             }
 
             String dependenciesTaskName = "find" + sourceSet.name.toLowerCase().capitalize() + "VhdlDependencies"
-            project.tasks.create(dependenciesTaskName, VhdlFindDependenciesTask.class) {
+            project.tasks.create(dependenciesTaskName, VhdlFindDependenciesTask) {
                 it.setDescription String.format("Finds dependencies of the %s Vhdl source.", sourceSet.getName())
                 it.setGroup HardwarePlugin.DEPENDENCIES_GROUP_NAME
                 it.dependsOn HardwarePlugin.PREPARE_TASK_NAME

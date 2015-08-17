@@ -1,5 +1,6 @@
 package at.rknoll.gradle.hardware.compiler.quartus
 
+import at.rknoll.gradle.hardware.compiler.quartus.tasks.QuartusSynthesizeTask
 import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Test

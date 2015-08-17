@@ -1,5 +1,6 @@
 package at.rknoll.gradle.hardware.language.vhdl
 
+import at.rknoll.gradle.hardware.HardwarePluginConvention
 import at.rknoll.parser.vhdl.VhdlBaseListener
 import at.rknoll.parser.vhdl.VhdlLexer
 import at.rknoll.parser.vhdl.VhdlParser
@@ -13,10 +14,11 @@ class VhdlFindDependenciesTask extends DefaultTask {
 
     @TaskAction
     def compile() {
-        def dependsOn = [:]
-        def definesUnits = [:]
+        def dependsOn = new HashMap<File, List<String>>()
+        def definesUnits = new HashMap<File, List<String>>()
+        def convention = project.convention.getPlugin HardwarePluginConvention
 
-        for (File file : project.hardwareSources.vertexSet()) {
+        for (File file : convention.hardwareSources.vertexSet()) {
             if (!VhdlUtils.isVhdlFile(file)) continue
 
             println "analyzing " + file.name + "..."
@@ -34,7 +36,7 @@ class VhdlFindDependenciesTask extends DefaultTask {
             definesUnits[file] = []
 
             def listener = new VhdlBaseListener() {
-                def defines(identifier) {
+                def defines(String identifier) {
                     identifier = identifier.toLowerCase()
                     if (!definesUnits[file].contains(identifier)) {
                         definesUnits[file].add(identifier)
@@ -42,7 +44,7 @@ class VhdlFindDependenciesTask extends DefaultTask {
                     dependsOn[file].remove(identifier)
                 }
 
-                def depends(identifier) {
+                def depends(String identifier) {
                     identifier = identifier.toLowerCase()
                     if (!dependsOn[file].contains(identifier) && !definesUnits[file].contains(identifier)) {
                         dependsOn[file].add(identifier)
@@ -91,13 +93,15 @@ class VhdlFindDependenciesTask extends DefaultTask {
             walker.walk(listener, designFile)
         }
 
-        for (File file : project.hardwareSources.vertexSet()) {
+        for (File file : convention.hardwareSources.vertexSet()) {
             if (!VhdlUtils.isVhdlFile(file)) continue
             println file.name + ": " + definesUnits[file] + "->" + dependsOn[file]
             dependsOn[file].each { depId ->
                 definesUnits.each { defFile, unitList ->
                     if (unitList.contains(depId)) {
-                        if (!project.hardwareSources.containsEdge(defFile, file)) project.hardwareSources.addEdge(defFile, file);
+                        if (!convention.hardwareSources.containsEdge(defFile, file)) {
+                            convention.hardwareSources.addEdge(defFile, file)
+                        }
                     }
                 }
             }

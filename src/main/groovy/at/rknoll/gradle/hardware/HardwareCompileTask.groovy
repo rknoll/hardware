@@ -12,29 +12,30 @@ class HardwareCompileTask extends SourceTask {
 
     @TaskAction
     def compile() {
-        DOTExporter exporter = new DOTExporter(new VertexNameProvider<File>() {
+        def convention = project.convention.getPlugin HardwarePluginConvention
+
+        def exporter = new DOTExporter(new VertexNameProvider<File>() {
             String getVertexName(File file) {
                 String filename = file.name
                 return filename.replace('-', '_').replace('.', '_')
             }
-        }, null, null, null, null);
+        }, null, null, null, null)
         File graphDir = new File(project.projectDir, "graph")
-        graphDir.mkdirs();
-        exporter.export(new FileWriter(new File(graphDir, "dependencies.dot")), project.hardwareSources);
+        graphDir.mkdirs()
+        exporter.export(new FileWriter(new File(graphDir, "dependencies.dot")), convention.hardwareSources)
 
-        CycleDetector<File, DefaultEdge> cycleDetector = new CycleDetector<File, DefaultEdge>(project.hardwareSources);
+        def cycleDetector = new CycleDetector<File, DefaultEdge>(convention.hardwareSources)
         if (cycleDetector.detectCycles()) {
             throw new RuntimeException("Detected cycles in source dependencies. Please resolve them.")
         }
 
         File file
-        TopologicalOrderIterator<File, DefaultEdge> orderIterator
-        orderIterator = new TopologicalOrderIterator<File, DefaultEdge>(project.hardwareSources)
+        def orderIterator = new TopologicalOrderIterator<File, DefaultEdge>(convention.hardwareSources)
         while (orderIterator.hasNext()) {
             file = orderIterator.next();
             println "compiling $file.name"
 
-            List<HardwareCompiler> allCompilers = new ArrayList<>((Set<HardwareCompiler>) project.hardwareCompilers);
+            def allCompilers = new ArrayList<HardwareCompiler>(convention.hardwareCompilers);
             allCompilers = allCompilers.sort()
 
             def usedCompiler = allCompilers.find { it.compile(file) }

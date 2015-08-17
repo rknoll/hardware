@@ -1,12 +1,14 @@
 package at.rknoll.gradle.hardware.compiler.vsim
 
 import at.rknoll.gradle.hardware.HardwareCompilerImpl
+import at.rknoll.gradle.hardware.HardwarePluginConvention
 import at.rknoll.gradle.hardware.HardwareUtils
 import at.rknoll.gradle.hardware.language.verilog.VerilogSourceSet
 import at.rknoll.gradle.hardware.language.vhdl.VhdlSourceSet
+import at.rknoll.utils.ExecUtils
 import org.gradle.api.Project
-import org.gradle.process.ExecResult
 import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 abstract class VSimCompilerImpl implements HardwareCompilerImpl {
     private Logger logger
@@ -38,40 +40,23 @@ abstract class VSimCompilerImpl implements HardwareCompilerImpl {
         }
     }
 
-    // LoggerFactory.getLogger('vsim-logger')
-
-    public VSimCompilerImpl(Project project, Logger logger) {
+    public VSimCompilerImpl(Project project, String name) {
         this.project = project
-        this.logger = logger
+        this.logger = LoggerFactory.getLogger(name + '-logger')
         this.notFound = false
     }
 
-    abstract protected VSimExtension getExtension();
+    abstract protected VSimExtension getExtension()
 
-    abstract protected Set<String> getPaths();
+    abstract protected Set<String> getPaths()
 
     private void mapLibrary(String name, String path, File compileDir, VSimExtension extension, Set<String> paths) {
         if (vsimPathVMap == null) vsimPathVMap = VSimUtils.findModelsimAlteraExecutable("vmap", extension, paths)
         if (vsimPathVMap == null) {
             throw new RuntimeException("Could not find vmap executable in selected compiler");
         }
-
         def args = [vsimPathVMap, name, path]
-        new ByteArrayOutputStream().withStream { os ->
-            ExecResult result = project.exec {
-                workingDir = compileDir.getAbsolutePath()
-                commandLine = args
-                standardOutput = os
-                ignoreExitValue = true
-            }
-
-            String output = os.toString()
-            int exitCode = result.getExitValue()
-
-            if (exitCode != 0) {
-                throw new RuntimeException("Error " + exitCode + " while executing '" + args.join(" ") + "'\noutput:\n" + output);
-            }
-        }
+        ExecUtils.exec(project, args, compileDir)
     }
 
     private boolean prepareWork(File file, VSimExtension extension, Set<String> paths) {
@@ -85,28 +70,14 @@ abstract class VSimCompilerImpl implements HardwareCompilerImpl {
             throw new RuntimeException("Invalid compile directory '" + compileDir.getAbsolutePath() + "'. If this is a File, please remove it.")
         }
 
-        def info = project.hardwareSourceInformation[file]
+        def convention = project.convention.getPlugin HardwarePluginConvention
+        def info = convention.hardwareSourceInformation[file]
         def libraryName = HardwareUtils.getLibraryName(info.group, info.name);
 
         if (!(new File(compileDir, libraryName)).exists()) {
             def args = [vsimPathVLib, libraryName]
-            println "creating work library.."
-
-            new ByteArrayOutputStream().withStream { os ->
-                ExecResult result = project.exec {
-                    workingDir = compileDir.getAbsolutePath()
-                    commandLine = args
-                    standardOutput = os
-                    ignoreExitValue = true
-                }
-
-                String output = os.toString()
-                int exitCode = result.getExitValue()
-
-                if (exitCode != 0) {
-                    throw new RuntimeException("Error " + exitCode + " while executing '" + args.join(" ") + "'\noutput:\n" + output);
-                }
-            }
+            logger.info "creating work library.."
+            ExecUtils.exec(project, args, compileDir)
         }
 
         mapLibrary("work", libraryName, compileDir, extension, paths);
@@ -128,7 +99,6 @@ abstract class VSimCompilerImpl implements HardwareCompilerImpl {
 
         SourceFileInfo info = new SourceFileInfo(file)
         String compiler = getCompilerExecutable(info)
-
         if (compiler == null) return false
 
         def extension = getExtension()
@@ -142,31 +112,18 @@ abstract class VSimCompilerImpl implements HardwareCompilerImpl {
             return false
         }
 
-        if (vsimPathCompiler[compiler] == null) vsimPathCompiler[compiler] = VSimUtils.findModelsimAlteraExecutable(compiler, extension, paths)
+        if (vsimPathCompiler[compiler] == null) {
+            vsimPathCompiler[compiler] = VSimUtils.findModelsimAlteraExecutable(compiler, extension, paths)
+        }
 
         File compileDir = project.file("compile")
         if (!compileDir.isDirectory()) {
-            throw new RuntimeException("Invalid compile directory '" + compileDir.getAbsolutePath() + "'. If this is a File, please remove it.")
+            throw new RuntimeException("Invalid compile directory '" +
+                    compileDir.getAbsolutePath() + "'. If this is a File, please remove it.")
         }
 
         def args = [vsimPathCompiler[compiler], file.getAbsolutePath()]
-
-        new ByteArrayOutputStream().withStream { os ->
-            ExecResult result = project.exec {
-                workingDir = compileDir.getAbsolutePath()
-                commandLine = args
-                standardOutput = os
-                ignoreExitValue = true
-            }
-
-            String output = os.toString()
-            int exitCode = result.getExitValue()
-
-            if (exitCode != 0) {
-                throw new RuntimeException("Error " + exitCode + " while executing '" + args.join(" ") + "'\noutput:\n" + output);
-            }
-        }
-
+        ExecUtils.exec(project, args, compileDir)
         return true
     }
 

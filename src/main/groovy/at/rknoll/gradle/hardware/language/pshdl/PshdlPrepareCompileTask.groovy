@@ -1,5 +1,6 @@
 package at.rknoll.gradle.hardware.language.pshdl
 
+import at.rknoll.gradle.hardware.HardwarePluginConvention
 import at.rknoll.gradle.hardware.HardwareSourceInformation
 import at.rknoll.gradle.hardware.HardwareUtils
 import org.gradle.api.DefaultTask
@@ -26,9 +27,7 @@ class PshdlPrepareCompileTask extends DefaultTask {
     }
 
     public PshdlPrepareCompileTask source(Object... sources) {
-        for (Object source : sources) {
-            this.source.add(source);
-        }
+        this.source.addAll(sources)
         return this;
     }
 
@@ -51,9 +50,11 @@ class PshdlPrepareCompileTask extends DefaultTask {
         sourceInfo.name = project.name
         sourceInfo.version = project.version
 
-        for (File file : project.hardwareSources.vertexSet()) {
+        def convention = project.convention.getPlugin HardwarePluginConvention
+
+        for (File file : convention.hardwareSources.vertexSet()) {
             if (!PshdlUtils.isPshdlFile(file)) continue
-            def targetInfo = project.hardwareSourceInformation[file]
+            def targetInfo = convention.hardwareSourceInformation[file]
             if (targetInfo.name.equals(sourceInfo.name) && targetInfo.group.equals(sourceInfo.group)) continue
             allPshdlFiles.add(file)
         }
@@ -62,9 +63,8 @@ class PshdlPrepareCompileTask extends DefaultTask {
 
         for (File file : allPshdlFiles) {
             if (!PshdlUtils.isPshdlFile(file)) continue
-            def fileInfo = project.hardwareSourceInformation[file]
+            def fileInfo = convention.hardwareSourceInformation[file]
             if (fileInfo == null) fileInfo = sourceInfo
-
 
             def libraryName = HardwareUtils.getLibraryName(fileInfo.group, fileInfo.name);
             def destDir = new File(baseDir, libraryName)
@@ -76,17 +76,17 @@ class PshdlPrepareCompileTask extends DefaultTask {
                     InputStream resourceStream = this.getClass().getResourceAsStream("pshdl_pkg.vhd")
                     pshdlPkg = new File(destDir, "pshdl_pkg.vhd")
                     Files.copy(resourceStream, pshdlPkg.getAbsoluteFile().toPath(), StandardCopyOption.REPLACE_EXISTING)
-                    project.hardwareSourceInformation[pshdlPkg] = fileInfo
-                    project.hardwareSources.addVertex(pshdlPkg)
+                    convention.hardwareSourceInformation[pshdlPkg] = fileInfo
+                    convention.hardwareSources.addVertex(pshdlPkg)
                 }
-                project.hardwareSourceInformation[destFile] = fileInfo
-                project.hardwareSources.addVertex(destFile)
-                project.hardwareSources.addEdge(pshdlPkg, destFile);
+                convention.hardwareSourceInformation[destFile] = fileInfo
+                convention.hardwareSources.addVertex(destFile)
+                convention.hardwareSources.addEdge(pshdlPkg, destFile);
 
                 // so that other sources can reference the pshdl source as dependency..
-                project.hardwareSourceInformation[file] = fileInfo
-                project.hardwareSources.addVertex(file)
-                project.hardwareSources.addEdge(destFile, file);
+                convention.hardwareSourceInformation[file] = fileInfo
+                convention.hardwareSources.addVertex(file)
+                convention.hardwareSources.addEdge(destFile, file);
             }
         }
 

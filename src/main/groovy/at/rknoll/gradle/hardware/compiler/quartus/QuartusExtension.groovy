@@ -1,8 +1,5 @@
 package at.rknoll.gradle.hardware.compiler.quartus
 
-/**
- * Created by Richard on 20.07.2014.
- */
 class QuartusExtension {
     boolean use32bit = false
     String path = null
