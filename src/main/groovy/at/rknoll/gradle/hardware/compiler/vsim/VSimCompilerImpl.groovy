@@ -2,6 +2,7 @@ package at.rknoll.gradle.hardware.compiler.vsim
 
 import at.rknoll.gradle.hardware.HardwareCompilerImpl
 import at.rknoll.gradle.hardware.HardwarePluginConvention
+import at.rknoll.gradle.hardware.HardwareSourceInformation
 import at.rknoll.gradle.hardware.HardwareUtils
 import at.rknoll.gradle.hardware.language.verilog.VerilogSourceSet
 import at.rknoll.gradle.hardware.language.vhdl.VhdlSourceSet
@@ -71,7 +72,12 @@ abstract class VSimCompilerImpl implements HardwareCompilerImpl {
         }
 
         def convention = project.convention.getPlugin HardwarePluginConvention
-        def info = convention.hardwareSourceInformation[file]
+        HardwareSourceInformation info = null
+        convention.hardwareSourceInformation.each {
+            if (it.value.containsKey(file)) {
+                info = it.value[file]
+            }
+        }
         def libraryName = HardwareUtils.getLibraryName(info.group, info.name);
 
         if (!(new File(compileDir, libraryName)).exists()) {
