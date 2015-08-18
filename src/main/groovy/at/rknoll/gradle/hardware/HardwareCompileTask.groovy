@@ -50,7 +50,7 @@ class HardwareCompileTask extends DefaultTask {
                 def usedCompiler = allCompilers.find { it.compile(file) }
 
                 if (usedCompiler == null) {
-                    //throw new RuntimeException("could not find a compiler for $file.name")
+                    throw new RuntimeException("could not find a compiler for $file.name")
                 } else {
                     println "compiled using " + usedCompiler.name
                 }
