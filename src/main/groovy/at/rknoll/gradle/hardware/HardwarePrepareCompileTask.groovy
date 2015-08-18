@@ -33,8 +33,12 @@ class HardwarePrepareCompileTask extends DefaultTask {
             FileTree sources = project.fileTree(dir: moduleDirName)
             sources.visit { FileVisitDetails details ->
                 if (!details.isDirectory()) {
-                    convention.hardwareSourceInformation[details.file] = source
-                    convention.hardwareSources.addVertex(details.file)
+                    convention.hardwareSourceInformation.each {
+                        it.value[details.file] = source
+                    }
+                    convention.hardwareSources.each {
+                        it.value.addVertex(details.file)
+                    }
                 }
             }
         }

@@ -31,6 +31,7 @@ class VerilogPlugin implements Plugin<Project> {
 
             String prepareTaskName = "prepare" + sourceSet.name.toLowerCase().capitalize() + "VerilogCompile"
             project.tasks.create(prepareTaskName, VerilogPrepareCompileTask) {
+                it.sourceSet = sourceSet.name
                 it.setDescription String.format("Prepares to Compile the %s Verilog source.", sourceSet.name)
                 it.setSource verilogSourceSet.verilog
                 it.setGroup HardwarePlugin.PREPARE_GROUP_NAME

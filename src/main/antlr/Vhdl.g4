@@ -1710,3 +1710,7 @@ EXTENDED_DIGIT
 APOSTROPHE
   : '\''
   ;
+
+ANY
+  : .
+  ;

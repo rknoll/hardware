@@ -60,7 +60,6 @@ class HardwarePlugin implements Plugin<ProjectInternal> {
         project.tasks.create(HARDWARE_COMPILE_TASK_NAME, HardwareCompileTask) {
             it.setDescription "Compile Hardware."
             it.setGroup BasePlugin.BUILD_GROUP
-            it.setSource project.sourceSets.main.getAllSource()
             it.dependsOn PREPARE_TASK_NAME
             it.outputs.dir new File(project.projectDir, "graph")
             it.outputs.dir new File(project.projectDir, "compile")

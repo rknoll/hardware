@@ -7,10 +7,13 @@ import at.rknoll.parser.vhdl.VhdlParser
 import org.antlr.v4.runtime.ANTLRInputStream
 import org.antlr.v4.runtime.CommonTokenStream
 import org.antlr.v4.runtime.tree.ParseTreeWalker
+import org.gradle.api.Action
 import org.gradle.api.DefaultTask
+import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.TaskAction
 
 class VhdlFindDependenciesTask extends DefaultTask {
+    public String sourceSet
 
     @TaskAction
     def compile() {
@@ -18,10 +21,16 @@ class VhdlFindDependenciesTask extends DefaultTask {
         def definesUnits = new HashMap<File, List<String>>()
         def convention = project.convention.getPlugin HardwarePluginConvention
 
-        for (File file : convention.hardwareSources.vertexSet()) {
+        for (File file : convention.hardwareSources[sourceSet].vertexSet()) {
             if (!VhdlUtils.isVhdlFile(file)) continue
 
             println "analyzing " + file.name + "..."
+
+            if (convention.hardwareSourceDependencies.containsKey(file)) {
+                dependsOn[file] = convention.hardwareSourceDependencies[file]
+                definesUnits[file] = convention.hardwareSourceDefinitions[file]
+                continue
+            }
 
             // construct lexer and parsers
             def stream = new ANTLRInputStream(file.text)
@@ -89,18 +98,28 @@ class VhdlFindDependenciesTask extends DefaultTask {
                 }
             }
 
+            convention.hardwareSourceDependencies.put(file, dependsOn[file])
+            convention.hardwareSourceDefinitions.put(file, definesUnits[file])
+
             def walker = new ParseTreeWalker()
             walker.walk(listener, designFile)
         }
 
-        for (File file : convention.hardwareSources.vertexSet()) {
+        for (File file : convention.hardwareSources[sourceSet].vertexSet()) {
             if (!VhdlUtils.isVhdlFile(file)) continue
             println file.name + ": " + definesUnits[file] + "->" + dependsOn[file]
             dependsOn[file].each { depId ->
                 definesUnits.each { defFile, unitList ->
                     if (unitList.contains(depId)) {
-                        if (!convention.hardwareSources.containsEdge(defFile, file)) {
-                            convention.hardwareSources.addEdge(defFile, file)
+                        if (!convention.hardwareSources[sourceSet].containsEdge(defFile, file)) {
+                            convention.hardwareSources[sourceSet].addEdge(defFile, file)
+                        }
+                        if (SourceSet.MAIN_SOURCE_SET_NAME.equals(sourceSet)) {
+                            project.sourceSets.all([execute: { SourceSet sourceSet ->
+                                if (!convention.hardwareSources[sourceSet.name].containsEdge(defFile, file)) {
+                                    convention.hardwareSources[sourceSet.name].addEdge(defFile, file)
+                                }
+                            }] as Action<SourceSet>)
                         }
                     }
                 }

@@ -48,6 +48,7 @@ class PshdlPlugin implements Plugin<Project> {
             String prepareTaskName = "prepare" + sourceSet.name.toLowerCase().capitalize() + "PshdlCompile"
             String cleanPrepareTaskName = "cleanPrepare" + sourceSet.name.toLowerCase().capitalize() + "PshdlCompile"
             project.tasks.create(prepareTaskName, PshdlPrepareCompileTask) {
+                it.sourceSet = sourceSet.name
                 it.setDescription String.format("Prepares to Compile the %s Pshdl source.", sourceSet.name)
                 it.setGroup HardwarePlugin.PREPARE_GROUP_NAME
                 it.setSource pshdlSourceSet.pshdl

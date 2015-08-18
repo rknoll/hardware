@@ -2,6 +2,7 @@ package at.rknoll.gradle.hardware.compiler.quartus.tasks
 
 import at.rknoll.gradle.hardware.HardwarePluginConvention
 import at.rknoll.utils.FileUtils
+import org.gradle.api.tasks.SourceSet
 import org.jgrapht.graph.DefaultEdge
 import org.jgrapht.traverse.TopologicalOrderIterator
 
@@ -16,7 +17,7 @@ class QuartusMapTask extends BaseQuartusTask {
     @Override
     protected def getArgs() {
         def convention = project.convention.getPlugin HardwarePluginConvention
-        def orderIterator = new TopologicalOrderIterator<File, DefaultEdge>(convention.hardwareSources)
+        def orderIterator = new TopologicalOrderIterator<File, DefaultEdge>(convention.hardwareSources[SourceSet.MAIN_SOURCE_SET_NAME])
         def base = project.file('syn')
 
         def sources = []

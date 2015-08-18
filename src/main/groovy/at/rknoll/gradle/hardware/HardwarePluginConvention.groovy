@@ -13,19 +13,27 @@ class HardwarePluginConvention {
     ProjectInternal project
     final SourceSetContainer sourceSets
     final NamedDomainObjectContainer<HardwareCompiler> hardwareCompilers
-    final DefaultDirectedGraph<File, DefaultEdge> hardwareSources
-    final Map<File, HardwareSourceInformation> hardwareSourceInformation
+    final Map<String, DefaultDirectedGraph<File, DefaultEdge>> hardwareSources
+    final Map<String, Map<File, HardwareSourceInformation>> hardwareSourceInformation
+    final Map<File, List<String>> hardwareSourceDependencies
+    final Map<File, List<String>> hardwareSourceDefinitions
 
     HardwarePluginConvention(ProjectInternal project, Instantiator instantiator, NamedDomainObjectContainer<HardwareCompiler> compilers) {
         this.project = project
         sourceSets = instantiator.newInstance(DefaultSourceSetContainer, project.fileResolver, project.tasks, instantiator)
         hardwareCompilers = compilers
-        hardwareSources = new DefaultDirectedGraph<File, DefaultEdge>(DefaultEdge)
+        hardwareSources = new HashMap<>()
         hardwareSourceInformation = new HashMap<>()
+        hardwareSourceDependencies = new HashMap<>()
+        hardwareSourceDefinitions = new HashMap<>()
 
         // create main and test source sets if not already defined
-        sourceSets.maybeCreate SourceSet.MAIN_SOURCE_SET_NAME
-        sourceSets.maybeCreate SourceSet.TEST_SOURCE_SET_NAME
+        [SourceSet.MAIN_SOURCE_SET_NAME, SourceSet.TEST_SOURCE_SET_NAME].each {
+            sourceSets.maybeCreate it
+            // create empty graphs
+            hardwareSources.put it, new DefaultDirectedGraph<>(DefaultEdge)
+            hardwareSourceInformation.put it, new HashMap<>()
+        }
     }
 
     def sourceSets(Closure closure) {

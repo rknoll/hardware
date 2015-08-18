@@ -31,6 +31,7 @@ class VhdlPlugin implements Plugin<Project> {
 
             String prepareTaskName = "prepare" + sourceSet.name.toLowerCase().capitalize() + "VhdlCompile"
             project.tasks.create(prepareTaskName, VhdlPrepareCompileTask) {
+                it.sourceSet = sourceSet.name
                 it.setDescription String.format("Prepares to Compile the %s Vhdl source.", sourceSet.name)
                 it.setSource vhdlSourceSet.vhdl
                 it.setGroup HardwarePlugin.PREPARE_GROUP_NAME
@@ -38,6 +39,7 @@ class VhdlPlugin implements Plugin<Project> {
 
             String dependenciesTaskName = "find" + sourceSet.name.toLowerCase().capitalize() + "VhdlDependencies"
             project.tasks.create(dependenciesTaskName, VhdlFindDependenciesTask) {
+                it.sourceSet = sourceSet.name
                 it.setDescription String.format("Finds dependencies of the %s Vhdl source.", sourceSet.getName())
                 it.setGroup HardwarePlugin.DEPENDENCIES_GROUP_NAME
                 it.dependsOn HardwarePlugin.PREPARE_TASK_NAME
