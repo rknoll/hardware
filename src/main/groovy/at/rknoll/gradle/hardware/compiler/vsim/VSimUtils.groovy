@@ -11,7 +11,7 @@ class VSimUtils {
         return executable.equals(filename)
     }
 
-    public static String findVSimExecutable(String executable, VSimExtension options, Set<String> paths) {
+    public static String findModelsimAlteraExecutable(String executable, VSimExtension options, Set<String> paths) {
         ArrayList<String> subDirectories = new ArrayList<String>(options.paths)
         ArrayList<String> foundInstances = new ArrayList<String>()
 
@@ -21,7 +21,6 @@ class VSimUtils {
 
         for (int i = 0; i < subDirectories.size(); i++) {
             File baseFile = new File(subDirectories.get(i))
-            println "baseFile: " + baseFile
             if (!baseFile.isDirectory() && matches(baseFile.getName(), executable)) foundInstances.add(baseFile.getAbsolutePath())
 
             for (File path : baseFile.listFiles()) {
@@ -31,8 +30,6 @@ class VSimUtils {
                 }
             }
         }
-        println "foundInstances: " + foundInstances
-        println "foundInstances: " + foundInstances.size()
 
         return (foundInstances.empty || foundInstances.size() > 1) ? null : foundInstances.get(0)
     }

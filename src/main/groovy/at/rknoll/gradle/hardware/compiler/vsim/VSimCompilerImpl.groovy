@@ -52,7 +52,7 @@ abstract class VSimCompilerImpl implements HardwareCompilerImpl {
     abstract protected Set<String> getPaths()
 
     private void mapLibrary(String name, String path, File compileDir, VSimExtension extension, Set<String> paths) {
-        if (vsimPathVMap == null) vsimPathVMap = VSimUtils.findVSimExecutable("vmap", extension, paths)
+        if (vsimPathVMap == null) vsimPathVMap = VSimUtils.findModelsimAlteraExecutable("vmap", extension, paths)
         if (vsimPathVMap == null) {
             throw new RuntimeException("Could not find vmap executable in selected compiler");
         }
@@ -61,7 +61,7 @@ abstract class VSimCompilerImpl implements HardwareCompilerImpl {
     }
 
     private boolean prepareWork(File file, VSimExtension extension, Set<String> paths) {
-        if (vsimPathVLib == null) vsimPathVLib = VSimUtils.findVSimExecutable("vlib", extension, paths)
+        if (vsimPathVLib == null) vsimPathVLib = VSimUtils.findModelsimAlteraExecutable("vlib", extension, paths)
         if (vsimPathVLib == null) return false
 
         def compileDir = project.file("compile")
@@ -119,7 +119,7 @@ abstract class VSimCompilerImpl implements HardwareCompilerImpl {
         }
 
         if (vsimPathCompiler[compiler] == null) {
-            vsimPathCompiler[compiler] = VSimUtils.findVSimExecutable(compiler, extension, paths)
+            vsimPathCompiler[compiler] = VSimUtils.findModelsimAlteraExecutable(compiler, extension, paths)
         }
 
         File compileDir = project.file("compile")
