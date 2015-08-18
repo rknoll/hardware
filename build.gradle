@@ -36,7 +36,8 @@ dependencies {
     compile group: 'org.jgrapht', name: 'jgrapht-ext', version: '0.9.0'
     compile group: 'commons-io', name: 'commons-io', version: '2.4'
     compile group: 'com.intellij', name: 'forms_rt', version: '6.0.5'
-    antlr "org.antlr:antlr4:4.5"
+    compile group: 'org.antlr', name: 'antlr4', version: '4.5'
+    antlr group: 'org.antlr', name: 'antlr4', version: '4.5'
 }
 
 repositories {
