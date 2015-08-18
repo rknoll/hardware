@@ -24,14 +24,14 @@ class HardwareCompileTask extends DefaultTask {
                     return filename.replace('-', '_').replace('.', '_')
                 }
             }, null, null, null, null)
-            File graphDir = new File(project.projectDir, "graph-" + sourceSet.name)
+            File graphDir = new File(project.projectDir, "graph")
             graphDir.mkdirs()
-            exporter.export(new FileWriter(new File(graphDir, "dependencies.dot")),
+            exporter.export(new FileWriter(new File(graphDir, "dependencies-" + sourceSet.name + ".dot")),
                     convention.hardwareSources[sourceSet.name])
 
             def cycleDetector = new CycleDetector<File, DefaultEdge>(convention.hardwareSources[sourceSet.name])
             if (cycleDetector.detectCycles()) {
-                throw new RuntimeException("Detected cycles in source dependencies. Please resolve them.")
+                throw new RuntimeException("Detected cycles in " + sourceSet.name + "source dependencies. Please resolve them.")
             }
 
             File file
