@@ -1556,6 +1556,10 @@ waveform_element
   : expression ( AFTER expression )?
   ;
 
+character_literal
+   : APOSTROPHE ( . )? APOSTROPHE
+   ;
+
 //------------------------------------------Lexer-----------------------------------------
 BASE_LITERAL
 // INTEGER must be checked to be between and including 2 and 16 (included) i.e.
@@ -1612,24 +1616,20 @@ COMMENT
   ;
 
 TAB
-  : ( '\t' )+ -> skip 
+  : ( '\t' )+ -> skip
   ;
 
 SPACE
-  : ( ' ' )+ -> skip 
+  : ( ' ' )+ -> skip
   ;
 
 NEWLINE
-  : '\n' -> skip 
+  : '\n' -> skip
   ;
 
 CR
-  : '\r' -> skip 
+  : '\r' -> skip
   ;
-  
-character_literal
-   : APOSTROPHE . APOSTROPHE
-   ;
 
 STRING_LITERAL
   : '"' (~('"'|'\n'|'\r') | '""')* '"'
